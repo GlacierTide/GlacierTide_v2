@@ -1,0 +1,1 @@
+//create a header for my website which contains title (Glaciertide) in left corner and then about,prediction tool,world map,contacts section and then at top right it should have sign in and sign up and make sure to make the theme glacier based and resonating with my website and project

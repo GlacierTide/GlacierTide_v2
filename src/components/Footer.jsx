@@ -8,11 +8,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Description */}
           <div className="col-span-1 md:col-span-1">
-            <Link to="/" className="flex items-center space-x-2 text-ice-900 font-bold text-xl mb-4">
+            <Link to="/" className="flex items-center space-x-2 text-black font-bold text-xl mb-4">
               <span className="text-glacier-600">Glacier</span>
               <span>Tide</span>
             </Link>
-            <p className="text-ice-600 mb-4">
+            <p className="text-gray-500 mb-4">
               Exploring the world's glaciers and monitoring climate changes with cutting-edge technology.
             </p>
             <div className="flex space-x-4">
@@ -39,7 +39,7 @@ const Footer = () => {
 
           {/* Site Links */}
           <div className="col-span-1">
-            <h3 className="text-ice-800 font-semibold text-lg mb-4">Navigation</h3>
+            <h3 className="text-black font-semibold text-lg mb-4">Navigation</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="footer-link">Home</Link>
@@ -61,7 +61,7 @@ const Footer = () => {
 
           {/* Legal Links */}
           <div className="col-span-1">
-            <h3 className="text-ice-800 font-semibold text-lg mb-4">Legal</h3>
+            <h3 className="text-black font-semibold text-lg mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/privacy-policy" className="footer-link">Privacy Policy</Link>
@@ -77,15 +77,15 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div className="col-span-1">
-            <h3 className="text-ice-800 font-semibold text-lg mb-4">Contact Us</h3>
+            <h3 className="text-black font-semibold text-lg mb-4">Contact Us</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-glacier-500" />
-                <span className="text-ice-600">info@glaciertide.com</span>
+                <span className="text-gray-500">info@glaciertide.com</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-glacier-500" />
-                <span className="text-ice-600">+1 (555) 123-4567</span>
+                <span className="text-gray-500">+1 (555) 123-4567</span>
               </li>
             </ul>
           </div>
@@ -93,7 +93,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-ice-100 mt-10 pt-6">
-          <p className="text-center text-ice-500 text-sm">
+          <p className="text-center text-gray-500 text-sm">
             © {new Date().getFullYear()} GlacierTide. All rights reserved.
           </p>
         </div>

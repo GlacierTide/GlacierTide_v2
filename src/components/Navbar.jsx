@@ -47,10 +47,10 @@ const Navbar = () => {
         {/* Logo */}
         <Link 
           to="/" 
-          className="flex items-center space-x-2 text-ice-900 font-bold text-2xl"
+          className="flex items-center space-x-2 text-black font-bold text-2xl"
         >
           <span className="text-glacier-600">Glacier</span>
-          <span>Tide</span>
+          <span >Tide</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -70,7 +70,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-4">
           <Link 
             to="/sign-in" 
-            className="text-ice-800 hover:text-glacier-600 font-medium transition-colors"
+            className="text-black hover:text-glacier-600 font-medium transition-colors"
           >
             Sign In
           </Link>

@@ -30,8 +30,8 @@ const PredictionTool = () => {
           <div className="absolute inset-0 bg-glacier-pattern opacity-5"></div>
           <div className="container mx-auto px-4 relative">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-ice-900 mb-6">Glacier Prediction Tool</h1>
-              <p className="text-lg text-ice-700">
+              <h1 className="text-4xl md:text-5xl font-bold text-black mb-6">Glacier Prediction Tool</h1>
+              <p className="text-lg text-gray-500">
                 Visualize and predict glacier changes over time with our advanced modeling system.
               </p>
             </div>
@@ -45,11 +45,11 @@ const PredictionTool = () => {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Controls */}
                 <div className="lg:col-span-1">
-                  <h2 className="text-2xl font-semibold text-ice-900 mb-6">Prediction Settings</h2>
+                  <h2 className="text-2xl font-semibold text-black mb-6">Prediction Settings</h2>
                   
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="region" className="block text-ice-700 mb-2 font-medium">
+                      <label htmlFor="region" className="block text-gray-600 mb-2 font-medium">
                         <MapPin className="inline-block h-4 w-4 mr-2" />
                         Select Region
                       </label>
@@ -68,7 +68,7 @@ const PredictionTool = () => {
                     </div>
                     
                     <div>
-                      <label htmlFor="timeframe" className="block text-ice-700 mb-2 font-medium">
+                      <label htmlFor="timeframe" className="block text-gray-600 mb-2 font-medium">
                         <Calendar className="inline-block h-4 w-4 mr-2" />
                         Prediction Timeframe (Years)
                       </label>
@@ -88,22 +88,22 @@ const PredictionTool = () => {
                     <div className="bg-glacier-50 p-4 rounded-lg border border-glacier-100">
                       <div className="flex items-start mb-2">
                         <Info className="h-5 w-5 text-glacier-700 mr-2 flex-shrink-0 mt-0.5" />
-                        <h3 className="text-lg font-medium text-ice-900">About This Tool</h3>
+                        <h3 className="text-lg font-medium text-black">About This Tool</h3>
                       </div>
-                      <p className="text-sm text-ice-700">
+                      <p className="text-sm text-gray-500">
                         This prediction tool uses historical data and climate models to forecast glacier changes. Results show estimated mass and surface area changes over time based on current climate trends.
                       </p>
                     </div>
                     
                     <div className="flex items-center space-x-3">
                       <span className="inline-block w-3 h-3 bg-glacier-600 rounded-full"></span>
-                      <span className="text-sm text-ice-700">Glacier Mass Index</span>
+                      <span className="text-sm text-gray-600">Glacier Mass Index</span>
                     </div>
                     <div className="flex items-center space-x-3">
                       <span className="inline-block w-3 h-3 bg-glacier-400 rounded-full"></span>
-                      <span className="text-sm text-ice-700">Surface Area Index</span>
+                      <span className="text-sm text-gray-600">Surface Area Index</span>
                     </div>
-                    <div className="text-sm text-ice-500 italic">
+                    <div className="text-sm text-gray-500 italic">
                       Note: Dotted lines represent predicted future values.
                     </div>
                   </div>
@@ -112,7 +112,7 @@ const PredictionTool = () => {
                 {/* Visualization */}
                 <div className="lg:col-span-2">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-semibold text-ice-900">
+                    <h2 className="text-2xl font-semibold text-black">
                       <BarChart2 className="inline-block h-5 w-5 mr-2" />
                       Glacier Change Visualization
                     </h2>
@@ -133,7 +133,7 @@ const PredictionTool = () => {
                               const data = payload[0].payload;
                               return (
                                 <div className="custom-tooltip bg-white p-4 shadow-lg rounded-lg border border-ice-200">
-                                  <p className="font-medium text-ice-900">Year: {label}</p>
+                                  <p className="font-medium text-black">Year: {label}</p>
                                   <p className="text-glacier-600">Mass Index: {data.mass}%</p>
                                   <p className="text-glacier-400">Surface Area: {data.area}%</p>
                                   {data.predicted && (
@@ -168,8 +168,8 @@ const PredictionTool = () => {
                   </div>
                   
                   <div className="mt-6 p-4 bg-ice-50 rounded-lg border border-ice-100">
-                    <h3 className="text-lg font-medium text-ice-900 mb-2">Analysis Summary</h3>
-                    <p className="text-ice-700">
+                    <h3 className="text-lg font-medium text-black mb-2">Analysis Summary</h3>
+                    <p className="text-gray-600">
                       Based on current climate models, glaciers in the selected region are projected to lose approximately 70% of their mass and 62% of their surface area by 2050 compared to 2000 levels. This rapid decline could significantly impact water resources, ecosystems, and sea level rise.
                     </p>
                   </div>

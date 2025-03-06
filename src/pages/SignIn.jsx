@@ -23,15 +23,15 @@ const SignIn = () => {
           <div className="w-full md:w-1/2 flex items-center justify-center p-8">
             <div className="max-w-md w-full">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-ice-900 mb-2">Welcome Back</h1>
-                <p className="text-ice-600">Sign in to continue your glacier exploration</p>
+                <h1 className="text-3xl font-bold text-black mb-2">Welcome Back</h1>
+                <p className="text-gray-500">Sign in to continue your glacier exploration</p>
               </div>
 
               <div className="glacier-card p-8">
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="email" className="block text-ice-700 mb-2 font-medium">
+                      <label htmlFor="email" className="block text-gray-500 mb-2 font-medium">
                         Email Address
                       </label>
                       <input
@@ -47,7 +47,7 @@ const SignIn = () => {
 
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <label htmlFor="password" className="block text-ice-700 font-medium">
+                        <label htmlFor="password" className="block text-gray-500 font-medium">
                           Password
                         </label>
                         <Link to="/forgot-password" className="text-sm text-glacier-600 hover:text-glacier-700">
@@ -66,7 +66,7 @@ const SignIn = () => {
                         />
                         <button
                           type="button"
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-ice-500 hover:text-ice-700"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-600"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -82,7 +82,7 @@ const SignIn = () => {
                         onChange={() => setRememberMe(!rememberMe)}
                         className="h-4 w-4 text-glacier-600 rounded border-ice-300 focus:ring-glacier-500"
                       />
-                      <label htmlFor="remember" className="ml-2 block text-ice-700">
+                      <label htmlFor="remember" className="ml-2 block text-gray-600">
                         Remember me
                       </label>
                     </div>
@@ -95,7 +95,7 @@ const SignIn = () => {
                       Sign In
                     </button>
 
-                    <p className="text-center text-ice-600">
+                    <p className="text-center text-gray-500">
                       Don't have an account?{' '}
                       <Link to="/sign-up" className="text-glacier-600 hover:text-glacier-700 font-medium">
                         Sign up

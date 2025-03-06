@@ -92,15 +92,15 @@ const SignUp = () => {
           <div className="w-full md:w-1/2 flex items-center justify-center p-8">
             <div className="max-w-md w-full">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-ice-900 mb-2">Create Account</h1>
-                <p className="text-ice-600">Join the global community of glacier enthusiasts</p>
+                <h1 className="text-3xl font-bold text-black mb-2">Create Account</h1>
+                <p className="text-gray-500">Join the global community of glacier enthusiasts</p>
               </div>
 
               <div className="glacier-card p-8">
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="name" className="block text-ice-700 mb-2 font-medium">
+                      <label htmlFor="name" className="block text-gray-600 mb-2 font-medium">
                         Full Name
                       </label>
                       <input
@@ -116,7 +116,7 @@ const SignUp = () => {
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block text-ice-700 mb-2 font-medium">
+                      <label htmlFor="email" className="block text-gray-600 mb-2 font-medium">
                         Email Address
                       </label>
                       <input
@@ -132,7 +132,7 @@ const SignUp = () => {
                     </div>
 
                     <div>
-                      <label htmlFor="password" className="block text-ice-700 mb-2 font-medium">
+                      <label htmlFor="password" className="block text-gray-600 mb-2 font-medium">
                         Password
                       </label>
                       <div className="relative">
@@ -148,7 +148,7 @@ const SignUp = () => {
                         />
                         <button
                           type="button"
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-ice-500 hover:text-ice-700"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -176,7 +176,7 @@ const SignUp = () => {
                                   : 'bg-ice-200'
                               }`}></div>
                             </div>
-                            <span className="text-xs text-ice-600 ml-2 w-16 text-right">
+                            <span className="text-xs text-gray-500 ml-2 w-16 text-right">
                               {passwordStrength.label}
                             </span>
                           </div>
@@ -185,7 +185,7 @@ const SignUp = () => {
                     </div>
 
                     <div>
-                      <label htmlFor="confirmPassword" className="block text-ice-700 mb-2 font-medium">
+                      <label htmlFor="confirmPassword" className="block text-gray-600 mb-2 font-medium">
                         Confirm Password
                       </label>
                       <div className="relative">
@@ -201,7 +201,7 @@ const SignUp = () => {
                         />
                         <button
                           type="button"
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-ice-500 hover:text-ice-700"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
                           {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -223,7 +223,7 @@ const SignUp = () => {
                         required
                         className="h-4 w-4 mt-1 text-glacier-600 rounded border-ice-300 focus:ring-glacier-500"
                       />
-                      <label htmlFor="agreeTerms" className="ml-2 block text-ice-700 text-sm">
+                      <label htmlFor="agreeTerms" className="ml-2 block text-gray-600 text-sm">
                         I agree to the{' '}
                         <Link to="/terms-of-service" className="text-glacier-600 hover:text-glacier-700">
                           Terms of Service
@@ -249,7 +249,7 @@ const SignUp = () => {
                       Create Account
                     </button>
 
-                    <p className="text-center text-ice-600">
+                    <p className="text-center text-gray-600">
                       Already have an account?{' '}
                       <Link to="/sign-in" className="text-glacier-600 hover:text-glacier-700 font-medium">
                         Sign in

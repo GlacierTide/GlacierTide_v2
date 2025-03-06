@@ -103,7 +103,7 @@ const Contact = () => {
                       <h3 className="text-lg font-medium text-ice-900 mb-4">Follow Us</h3>
                       <div className="flex space-x-4">
                         <a 
-                          href="https://github.com" 
+                          href="https://github.com/GlacierTide/GlacierTide_v2" 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="bg-ice-50 hover:bg-ice-100 transition-colors p-2 rounded-full"

@@ -24,12 +24,12 @@ const Hero = () => {
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 z-10 text-center space-y-8">
         <div className="animate-fade-in-down">
-          <span className="inline-block py-1 px-3 rounded-full text-sm font-medium bg-glacier-50 text-glacier-800 border border-glacier-200 mb-4">
+          <span className="inline-block py-1 px-3 rounded-full text-sm font-medium bg-glacier-100 text-glacier-800 border border-glacier-200 mb-4">
             Explore Earth's Frozen Wonders
           </span>
         </div>
         
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-ice-900 leading-tight md:leading-tight animate-fade-in">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-black leading-tight md:leading-tight animate-fade-in">
           Discover the Beauty of <br />
           <span className="text-glacier-600">Glacier</span>
           <span className="relative inline-flex">
@@ -38,7 +38,7 @@ const Hero = () => {
           </span>
         </h1>
         
-        <p className="text-xl md:text-2xl text-ice-700 max-w-3xl mx-auto animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+        <p className="text-xl md:text-2xl text-black max-w-3xl mx-auto animate-fade-in-up" style={{ animationDelay: '200ms' }}>
           Monitoring, predicting, and preserving our planet's glaciers with advanced technology and research.
         </p>
         

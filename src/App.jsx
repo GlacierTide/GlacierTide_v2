@@ -11,6 +11,7 @@ import Contact from "./pages/Contact";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
+import Globe from "./pages/Globe";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/globe" element={<Globe />} />
           <Route path="/about" element={<About />} />
           <Route path="/prediction-tool" element={<PredictionTool />} />
           <Route path="/world-map" element={<WorldMap />} />

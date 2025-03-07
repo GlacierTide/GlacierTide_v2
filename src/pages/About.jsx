@@ -34,7 +34,7 @@ const About = () => {
         </section>
 
         {/* Key Facts */}
-        <section className="py-16 bg-gradient-to-b from-ice-50 to-white">
+        <section className="py-16 bg-gradient-to-b from-gray-100 to-white">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-black mb-10 text-center">Key Facts About Glaciers</h2>
             

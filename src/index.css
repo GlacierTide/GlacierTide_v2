@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+canvas{
+  height:100%;
+  width: 100%;
+  background-color: white
+};
 
 @layer base {
   * {
@@ -68,7 +73,7 @@
   }
   
   .footer-link {
-    @apply text-gray-500 hover:text-glacier-500 transition-colors duration-300;
+    @apply text-gray-600 hover:text-glacier-500 transition-colors duration-300;
   }
 }
 

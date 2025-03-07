@@ -33,6 +33,7 @@ const Navbar = () => {
     { name: 'Prediction Tool', path: '/prediction-tool' },
     { name: 'World Map', path: '/world-map' },
     { name: 'Contact', path: '/contact' },
+    { name: 'Globe', path: '/globe' },
   ];
 
   return (

@@ -47,8 +47,7 @@ const Navbar = () => {
                     to="/" 
                     className="flex items-center space-x-2 text-black font-bold text-2xl"
                 >
-                    <span className="text-glacier-600">Glacier</span>
-                    <span>Tide</span>
+                     <span><span className="text-glacier-600">Glacier</span>Tide</span>
                 </Link>
 
                 {/* Desktop Navigation */}

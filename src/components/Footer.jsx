@@ -9,8 +9,7 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="flex items-center space-x-2 text-black font-bold text-xl mb-4">
-              <span className="text-glacier-600">Glacier</span>
-              <span>Tide</span>
+            <span><span className="text-glacier-600">Glacier</span>Tide</span>
             </Link>
             <p className="text-gray-500 mb-4">
               Exploring the world's glaciers and monitoring climate changes with cutting-edge technology.

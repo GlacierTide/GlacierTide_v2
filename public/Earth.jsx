@@ -49,7 +49,7 @@ export default function Earth(props) {
       return 'Black Sea';
     }
     //Caribbean sea
-    else if (x > 0.257 && x < 0.285 && y > 0.499 && y < 0.540) {
+    else if (x > 0.257 && x < 0.275 && y > 0.510 && y < 0.550) {
       return 'Caribbean Sea';
     }
   
@@ -62,13 +62,13 @@ export default function Earth(props) {
       <mesh
         geometry={nodes.Object_4.geometry}
         material={materials['Scene_-_Root']}
-        scale={1.128}
+        scale={2}
       />
 
       {/* Markers */}
       <Marker
         u={0.897}
-        v={0.630}
+        v={0.637}
         color="red"
         onClick={() => props.onSeaClick('Red Sea')} // Trigger popup for Red Sea
       />
@@ -85,8 +85,8 @@ export default function Earth(props) {
         onClick={() => props.onSeaClick('Arabian Sea')} // Trigger popup for Arabian Sea
       />
       <Marker
-        u={0.258}
-        v={0.548}
+        u={0.236}
+        v={0.607}
         color="white"
         onClick={() => props.onSeaClick('Caribbean Sea')} // Trigger popup for Arabian Sea
       />

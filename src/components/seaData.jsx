@@ -42,4 +42,19 @@ export const seaData = {
       precipitation: '80 mm/year',
       oceanTemperature: '26°C',
     },
+    'Caribbean Sea': {
+      gigatonnesIceLoss: '6 Gt',
+      seaLevelEquivalent: '0.3 mm',
+      massBalance: '-0.8 Gt/year',
+      iceFlowVelocity: '150 m/year',
+      glacierLengthChanges: '-3.5 km',
+      icebergCalvingRates: '35 Gt/year',
+      globalMeanSeaLevel: '2.8 mm/year',
+      regionalSeaLevelChange: '3.5 mm/year',
+      rateOfSeaLevelRise: '1.2 mm/year',
+      surfaceTemperature: '27°C',
+      precipitation: '85 mm/year',
+      oceanTemperature: '27°C',
+    },
+
   };

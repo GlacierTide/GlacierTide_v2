@@ -1,35 +1,37 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+// frontend/src/AuthContext.jsx
+import { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
-  // Set userId in both state and localStorage on login
-  const login = (newUserId) => {
-    setUserId(newUserId);
-    localStorage.setItem("userId", newUserId);
-  };
+    useEffect(() => {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            setUser({ userId });
+        }
+    }, []);
 
-  // Clear userId from state and localStorage on logout
-  const logout = () => {
-    setUserId(null);
-    localStorage.removeItem("userId");
-  };
+    const login = (userId) => {
+        localStorage.setItem('userId', userId);
+        setUser({ userId });
+        navigate('/');
+    };
 
-  useEffect(() => {
-    // Update userId on context initialization or page refresh
-    const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
-      setUserId(storedUserId);
-    }
-  }, []);
+    const logout = () => {
+        localStorage.removeItem('userId');
+        setUser(null);
+        navigate('/sign-in');
+    };
 
-  return (
-    <AuthContext.Provider value={{ userId, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ user, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => useContext(AuthContext);

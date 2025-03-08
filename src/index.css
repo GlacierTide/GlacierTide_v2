@@ -32,7 +32,7 @@ canvas{
   }
   
   .glacier-card {
-    @apply relative bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-md rounded-xl border border-white/50 shadow-lg transition-all duration-300;
+    @apply relative bg-gradient-to-br from-white/70 to-white/40 backdrop-blur-md rounded-xl border border-white/50 shadow-lg transition-all duration-300;
   }
   
   .glacier-input {

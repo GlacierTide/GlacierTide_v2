@@ -48,6 +48,10 @@ export default function Earth(props) {
     else if (x > 0.57 && x < 0.62 && y > 0.70 && y < 0.77) {
       return 'Black Sea';
     }
+    //Caribbean sea
+    else if (x > 0.257 && x < 0.285 && y > 0.499 && y < 0.540) {
+      return 'Caribbean Sea';
+    }
   
     return null; // No recognized sea region
   };
@@ -77,8 +81,14 @@ export default function Earth(props) {
       <Marker
         u={0.825}
         v={0.571}
-        color="blue"
+        color="black"
         onClick={() => props.onSeaClick('Arabian Sea')} // Trigger popup for Arabian Sea
+      />
+      <Marker
+        u={0.258}
+        v={0.548}
+        color="white"
+        onClick={() => props.onSeaClick('Caribbean Sea')} // Trigger popup for Arabian Sea
       />
     </group>
   );

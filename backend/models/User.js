@@ -6,6 +6,8 @@ const UserSchema = new mongoose.Schema({
     lastname: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
+    isVerified: { type: Boolean, default: false }, // Email verification status
+    verificationToken: { type: String }, // Token for email verification
 });
 
 // Hash password before saving

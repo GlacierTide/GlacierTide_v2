@@ -9,7 +9,7 @@ function MapPin({
   onClick, 
   label, 
   selected = false,
-  size = 0.015
+  size = 0.025
 }) {
   const groupRef = useRef();
   const pinRef = useRef();
@@ -24,7 +24,7 @@ function MapPin({
   const z = Math.sin(theta) * Math.sin(phi);
   
   // Offset to place pin above surface
-  const offset = 1.13; // Matches your setup
+  const offset = 2.490; // Matches your setup
   const position = [x * offset, y * offset, z * offset];
   
   // Animation

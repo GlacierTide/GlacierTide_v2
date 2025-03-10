@@ -30,7 +30,7 @@ function CameraController({ targetSea }) {
         Math.sin(theta) * Math.cos(phi),
         Math.cos(theta),
         Math.sin(theta) * Math.sin(phi)
-      ).multiplyScalar(1.13); // Match marker offset
+      ).multiplyScalar(2.5); // Match marker offset
 
       const newPosition = targetPosition.clone().multiplyScalar(2); // Zoom to 2x distance
       camera.position.lerp(newPosition, 0.05); // Smooth transition

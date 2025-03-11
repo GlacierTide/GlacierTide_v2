@@ -1,4 +1,3 @@
-// frontend/src/pages/Globe.jsx
 import { useState, useRef, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, OrbitControls } from '@react-three/drei';
@@ -16,8 +15,9 @@ const seaCoordinates = {
 };
 
 // Camera controller for animation
-function CameraController({ targetSea }) {
+function CameraController({ targetSea, setTargetSea }) {
   const cameraRef = useRef();
+  const animationCompleteRef = useRef(false);
 
   useFrame(({ camera }) => {
     if (!cameraRef.current) cameraRef.current = camera;
@@ -33,8 +33,21 @@ function CameraController({ targetSea }) {
       ).multiplyScalar(2.5); // Match marker offset
 
       const newPosition = targetPosition.clone().multiplyScalar(2); // Zoom to 2x distance
+      
+      // Calculate distance to target to know when animation is complete
+      const distanceToTarget = camera.position.distanceTo(newPosition);
       camera.position.lerp(newPosition, 0.05); // Smooth transition
       camera.lookAt(0, 0, 0); // Look at globe center
+      
+      // When we're close enough to target, mark animation as complete
+      if (distanceToTarget < 0.1 && !animationCompleteRef.current) {
+        animationCompleteRef.current = true;
+        // Reset target after a short delay to allow manual control
+        setTimeout(() => {
+          setTargetSea(null);
+          animationCompleteRef.current = false;
+        }, 500);
+      }
     }
   });
 
@@ -113,7 +126,7 @@ const Globe = () => {
           <Suspense fallback={null}>
             <ambientLight intensity={0.5} />
             <Earth onSeaClick={handleSeaClick} targetSea={targetSea} isRotating={isRotating} />
-            <CameraController targetSea={targetSea} />
+            <CameraController targetSea={targetSea} setTargetSea={setTargetSea} />
             <OrbitControls
               ref={controlsRef}
               enableZoom={true}
@@ -121,6 +134,7 @@ const Globe = () => {
               autoRotate={isRotating} // Use OrbitControls for auto-rotation
               autoRotateSpeed={1.2} // Adjust speed (positive for counterclockwise)
               enableDamping={true} // Smooth manual rotation
+              enabled={!targetSea} // Disable during animation, enable after
             />
             <Environment preset="forest" />
           </Suspense>

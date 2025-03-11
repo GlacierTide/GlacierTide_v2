@@ -10,9 +10,10 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-ice-50 to-ice-100 opacity-95"></div>
+    
+    <section className="relative h-screen flex items-center justify-center overflow-hidden mt-4">
+     {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-b from-glacier-50 to-glacier-200 opacity-95"></div>
       
       {/* Animated Background Shapes */}
       <div className="absolute inset-0 overflow-hidden">
@@ -31,6 +32,7 @@ const Hero = () => {
         
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-black leading-tight md:leading-tight animate-fade-in">
           Discover the Beauty of <br />
+          
           <span className="text-glacier-600">Glacier</span>
           <span className="relative inline-flex">
             Tide

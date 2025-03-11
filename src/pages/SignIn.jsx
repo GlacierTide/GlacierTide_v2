@@ -40,11 +40,11 @@ const SignIn = () => {
         <Layout>
             <div className="page-transition">
                 <section className="min-h-screen-minus-nav flex flex-col md:flex-row">
-                    <div className="w-full md:w-1/2 flex items-center justify-center p-8">
+                    <div className="w-full md:w-1/2 mt-4 flex items-center justify-center p-8">
                         <div className="max-w-md w-full">
                             <div className="text-center mb-8">
                                 <h1 className="text-3xl font-bold text-black mb-2">Welcome Back</h1>
-                                <p className="text-gray-500">Sign in to continue your glacier exploration</p>
+                                <p className="text-gray-500">Sign in to continue your scientific exploration</p>
                             </div>
 
                             <div className="glacier-card p-8">
@@ -128,14 +128,14 @@ const SignIn = () => {
                         </div>
                     </div>
 
-                    <div className="hidden md:block w-1/2 bg-gradient-to-br from-glacier-400 to-glacier-700 relative overflow-hidden">
+                    <div className="hidden md:block w-1/2 h-[680px] mt-4 bg-gradient-to-br from-glacier-400 to-glacier-700 relative overflow-hidden">
                         <div className="absolute inset-0 bg-glacier-pattern opacity-10"></div>
                         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white/20 blur-3xl animate-flow"></div>
                         <div className="absolute bottom-1/3 right-1/3 w-96 h-96 rounded-full bg-white/10 blur-3xl animate-flow" style={{ animationDelay: '2s' }}></div>
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-12">
                             <h2 className="text-3xl font-bold mb-6 text-center">Explore Earth's Frozen Wonders</h2>
                             <p className="text-lg text-center max-w-md mb-8">
-                                Join our community of scientists, researchers, and enthusiasts dedicated to understanding and preserving glaciers.
+                                Join our community of enviromental enthusiasts dedicated to understanding and preserving glaciers.
                             </p>
                             <Link to="/about" className="inline-flex items-center text-white group">
                                 Learn more about our mission

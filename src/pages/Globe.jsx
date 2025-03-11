@@ -136,7 +136,7 @@ const Globe = () => {
               enableDamping={true} // Smooth manual rotation
               enabled={!targetSea} // Disable during animation, enable after
             />
-            <Environment preset="forest" />
+            <Environment preset="sunset" />
           </Suspense>
         </Canvas>
 

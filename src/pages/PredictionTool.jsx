@@ -30,7 +30,7 @@ const PredictionTool = () => {
           <div className="absolute inset-0 bg-glacier-pattern opacity-5"></div>
           <div className="container mx-auto px-4 relative">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-black mb-6">Glacier Prediction Tool</h1>
+              <h1 className="text-4xl md:text-5xl font-bold text-black mb-6">Glacier Melt Prediction Tool</h1>
               <p className="text-lg text-gray-500">
                 Visualize and predict glacier changes over time with our advanced modeling system.
               </p>

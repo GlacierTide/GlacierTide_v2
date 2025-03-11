@@ -70,8 +70,7 @@ const Contact = () => {
                         </div>
                         <div>
                           <h3 className="text-lg font-medium text-black">Email</h3>
-                          <p className="text-gray-600">info@glaciertide.com</p>
-                          <p className="text-gray-600">support@glaciertide.com</p>
+                          <p className="text-gray-600">glaciertide4@gmail.com</p>
                         </div>
                       </div>
                       
@@ -81,22 +80,11 @@ const Contact = () => {
                         </div>
                         <div>
                           <h3 className="text-lg font-medium texgray-600">Phone</h3>
-                          <p className="text-gray-600">+1 (555) 123-4567</p>
-                          <p className="text-gray-600">+1 (555) 765-4321</p>
+                          <p className="text-gray-600">+91 9999988888</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start">
-                        <div className="bg-glacier-50 rounded-full p-3 mr-4">
-                          <MapPin className="h-6 w-6 text-glacier-600" />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-medium texgray-600">Office</h3>
-                          <p className="text-gray-600">123 Glacier Way</p>
-                          <p className="text-gray-600">Alpine City, AC 12345</p>
-                          <p className="text-gray-600">United States</p>
-                        </div>
-                      </div>
+                      
                     </div>
                     
                     <div className="mt-8 pt-8 border-t border-ice-100">

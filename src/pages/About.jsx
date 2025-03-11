@@ -2,6 +2,33 @@ import { Layout } from '../components/Layout';
 import { Clock, Droplets, MapPin, ThermometerSnowflake } from 'lucide-react';
 
 const About = () => {
+  const teamMembers = [
+    {
+      name: 'Atharva Sawant',
+      position: 'Web Dev Team Member',
+      description: 'Aspiring student from Symbiosis Institute of Technology.',
+      imageUrl: '/path-to-image1.jpg',
+    },
+    {
+      name: 'Venkata Rohitraj Kesanakurti',
+      position: 'Data Team Member',
+      description: 'Aspiring student from Symbiosis Institute of Technology.',
+      imageUrl: '/path-to-image2.jpg',
+    },
+    {
+      name: 'Utsav Sangani',
+      position: 'Data Team Member',
+      description: 'Aspiring student from Symbiosis Institute of Technology.',
+      imageUrl: '/path-to-image3.jpg',
+    },
+    {
+      name: 'Tanush Abhinav Shah',
+      position: 'Web Dev Team Member',
+      description: 'Aspiring student from Symbiosis Institute of Technology.',
+      imageUrl: '/path-to-image4.jpg',
+    },
+  ];
+
   return (
     <Layout>
       <div className="page-transition">
@@ -24,10 +51,12 @@ const About = () => {
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-black mb-6">Our Mission</h2>
               <p className="text-gray-600 text-lg mb-6">
-                GlacierTide was founded with a clear mission: to advance our understanding of glacier dynamics and their relationship with climate change. We combine cutting-edge technology with scientific expertise to monitor glacier changes, predict future trends, and develop strategies for preservation.
+                GlacierTide was founded with a clear mission: to advance our understanding of glacier dynamics and their relationship with climate change.
+                We combine cutting-edge technology with scientific expertise to monitor glacier changes and predict future trends.
               </p>
               <p className="text-gray-600 text-lg">
-                Our comprehensive approach encompasses glacier monitoring, climate data analysis, predictive modeling, and public awareness efforts. We believe that by sharing knowledge and fostering collaboration, we can contribute to global efforts to address climate change and protect these vital ecosystems.
+                Our comprehensive approach encompasses glacier monitoring, climate data analysis, predictive modeling, and public awareness efforts. 
+                We believe that by sharing knowledge and fostering collaboration, we can contribute to global efforts to address climate change and protect these vital ecosystems.
               </p>
             </div>
           </div>
@@ -80,21 +109,19 @@ const About = () => {
             <div className="max-w-4xl mx-auto text-center mb-12">
               <h2 className="text-3xl font-bold text-black mb-4">Our Team</h2>
               <p className="text-gray-600">
-                Our diverse team of scientists, engineers, data analysts, and conservation specialists work together to advance glacier research and protection.
+                Our diverse team of enthusiasts work together to advance glacier research and protection.
               </p>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1, 2, 3,4].map((_, index) => (
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              {teamMembers.map((member, index) => (
                 <div key={index} className="glacier-card p-6 flex flex-col items-center text-center">
                   <div className="w-24 h-24 rounded-full bg-glacier-100 mb-4 overflow-hidden">
-                    <div className="w-full h-full bg-gradient-to-br from-glacier-200 to-glacier-300"></div>
+                    <img src={member.imageUrl} className="w-full h-full object-cover" />
                   </div>
-                  <h3 className="text-xl font-semibold text-black mb-1">Team Member</h3>
-                  <p className="text-glacier-600 text-sm mb-3">Position</p>
-                  <p className="text-gray-500">
-                    Expert in glaciology with a passion for climate research and conservation efforts.
-                  </p>
+                  <h3 className="text-xl font-semibold text-black mb-1">{member.name}</h3>
+                  <p className="text-glacier-600 text-sm mb-3">{member.position}</p>
+                  <p className="text-gray-500">{member.description}</p>
                 </div>
               ))}
             </div>

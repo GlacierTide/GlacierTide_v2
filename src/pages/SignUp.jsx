@@ -76,7 +76,7 @@ const SignUp = () => {
         <Layout>
             <div className="page-transition">
                 <section className="min-h-screen-minus-nav flex flex-col md:flex-row">
-                    <div className="hidden md:block w-1/2 bg-gradient-to-br from-glacier-500 to-glacier-800 relative overflow-hidden">
+                    <div className="hidden md:block w-1/2 mt-4 h-[680px] bg-gradient-to-br from-glacier-500 to-glacier-800 relative overflow-hidden">
                         <div className="absolute inset-0 bg-glacier-pattern opacity-10"></div>
                         <div className="absolute top-1/3 right-1/4 w-96 h-96 rounded-full bg-white/10 blur-3xl animate-flow"></div>
                         <div className="absolute bottom-1/4 left-1/3 w-64 h-64 rounded-full bg-white/20 blur-3xl animate-flow" style={{ animationDelay: '1.5s' }}></div>
@@ -86,31 +86,31 @@ const SignUp = () => {
                                 <div className="flex items-start">
                                     <CheckCircle2 className="text-white h-6 w-6 mt-0.5 mr-3 flex-shrink-0" />
                                     <div>
-                                        <h3 className="font-semibold text-xl mb-1">Access Premium Tools</h3>
+                                        <h3 className="font-semibold text-xl mb-1">Access Prediction Tools</h3>
                                         <p className="text-white/80">Explore our prediction tools, interactive maps, and scientific resources.</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">
                                     <CheckCircle2 className="text-white h-6 w-6 mt-0.5 mr-3 flex-shrink-0" />
                                     <div>
-                                        <h3 className="font-semibold text-xl mb-1">Join Global Research</h3>
-                                        <p className="text-white/80">Participate in community-driven glacier monitoring and conservation projects.</p>
+                                        <h3 className="font-semibold text-xl mb-1">3D Globe Model</h3>
+                                        <p className="text-white/80">View more detailed insights from our 3D globe model.</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">
                                     <CheckCircle2 className="text-white h-6 w-6 mt-0.5 mr-3 flex-shrink-0" />
                                     <div>
-                                        <h3 className="font-semibold text-xl mb-1">Stay Informed</h3>
-                                        <p className="text-white/80">Receive updates on climate research, glacier events, and educational opportunities.</p>
+                                        <h3 className="font-semibold text-xl mb-1">Extensive Support</h3>
+                                        <p className="text-white/80">Receive customer support for any problems and be able to suggest feedback to improve user experience.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full md:w-1/2 flex items-center justify-center p-8">
+                    <div className="w-full md:w-1/2 mt-4 flex items-center justify-center p-8">
                         <div className="max-w-md w-full">
-                            <div className="text-center mb-8">
+                            <div className="text-center mb-2">
                                 <h1 className="text-3xl font-bold text-black mb-2">Create Account</h1>
                                 <p className="text-gray-500">Join the global community of glacier enthusiasts</p>
                             </div>

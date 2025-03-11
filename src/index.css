@@ -36,7 +36,7 @@ canvas{
   }
   
   .glacier-input {
-    @apply bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glacier-400/50 transition-all duration-300;
+    @apply bg-white/10 backdrop-blur-md border border-zinc-600/30 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glacier-400/50 transition-all duration-300;
   }
   
   .nav-link {

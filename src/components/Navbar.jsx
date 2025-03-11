@@ -45,8 +45,14 @@ const Navbar = () => {
                 {/* Logo */}
                 <Link 
                     to="/" 
-                    className="flex items-center space-x-2 text-black font-bold text-2xl"
+                    className="flex items-center space-x-2 text-black font-bold text-3xl"
                 >
+                {/* Logo Icon */}
+                <img 
+                        src="logo1.ico" 
+                        alt="GlacierTide Logo" 
+                        className="h-12 w-14 mb-2"
+                    />
                      <span><span className="text-glacier-600">Glacier</span>Tide</span>
                 </Link>
 

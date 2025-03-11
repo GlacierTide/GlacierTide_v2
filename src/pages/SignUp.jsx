@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Layout } from '../components/Layout';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, CheckCircle2, UserPlus } from 'lucide-react';
+import { toast } from 'sonner'; // Added import for Sonner toast
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -47,6 +48,12 @@ const SignUp = () => {
             if (!response.ok) {
                 throw new Error(data.message || 'Signup failed');
             }
+
+            // Added Sonner toast notification
+            toast.success('Check your email for link verification', {
+                duration: 5000, // Toast visible for 5 seconds
+                position: 'top-center',
+            });
 
             navigate('/sign-in');
         } catch (err) {

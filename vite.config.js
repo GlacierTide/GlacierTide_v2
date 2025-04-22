@@ -7,10 +7,12 @@ export default defineConfig({
   plugins: [react()],
   css: {
     postcss: {
-      plugins: [
-        tailwindcss,
-        autoprefixer
-      ],
+      plugins: [tailwindcss, autoprefixer],
     },
   },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:8800' // Correct place for the proxy config
+    }
+  }
 })

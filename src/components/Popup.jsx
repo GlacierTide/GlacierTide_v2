@@ -5,6 +5,7 @@ function Popup({ seaName, onClose }) {
   const [mlData, setMlData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('predictions');
+  const [selectedModel, setSelectedModel] = useState('');
 
   useEffect(() => {
     setIsVisible(true);
@@ -25,6 +26,10 @@ function Popup({ seaName, onClose }) {
       }
       const data = await response.json();
       setMlData(data);
+      // Set the first model as default selected model
+      if (data && !data.error && Object.keys(data).length > 0) {
+        setSelectedModel(Object.keys(data)[0]);
+      }
     } catch (error) {
       console.error('Error fetching ML data:', error);
       setMlData({ error: 'Failed to load ML predictions' });
@@ -36,6 +41,10 @@ function Popup({ seaName, onClose }) {
   const handleCloseClick = () => {
     setIsVisible(false);
     setTimeout(onClose, 300);
+  };
+
+  const handleModelChange = (e) => {
+    setSelectedModel(e.target.value);
   };
 
   const renderLoadingSkeleton = () => (
@@ -63,19 +72,40 @@ function Popup({ seaName, onClose }) {
               <>
                 {mlData && !mlData.error ? (
                   <div className="space-y-3">
-                    {Object.entries(mlData).map(([model, value]) => (
-                      <div key={model} className="flex items-center gap-2 group hover:bg-blue-50 p-2 rounded-md transition-colors">
-                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                        <span className="text-gray-700 font-medium">{model}:</span>
-                        <span className="text-blue-900 ml-auto font-bold">{value} mm</span>
+                    <div className="mb-4">
+                      <label htmlFor="model-select" className="block text-sm font-medium text-gray-700 mb-1">
+                        Select Prediction Model:
+                      </label>
+                      <select
+                        id="model-select"
+                        value={selectedModel}
+                        onChange={handleModelChange}
+                        className="w-full p-2 border border-blue-300 rounded-md bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-800"
+                      >
+                        {Object.keys(mlData).map((model) => (
+                          <option key={model} value={model}>
+                            {model}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    {selectedModel && (
+                      <div className="bg-blue-100 p-4 rounded-md flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                          <span className="text-gray-700 font-medium">{selectedModel}:</span>
+                        </div>
+                        <span className="text-blue-900 font-bold text-lg">{mlData[selectedModel]} mm</span>
                       </div>
-                    ))}
+                    )}
+                    
                     <div className="bg-blue-50 p-3 rounded-md text-sm text-blue-700 mt-4">
                       <div className="flex items-start gap-2">
                         <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <p>These predictions show estimated sea level changes for {seaName} over the next 20 years based on our climate models.</p>
+                        <p>This prediction shows estimated sea level change for {seaName} over the next 20 years based on the selected climate model.</p>
                       </div>
                     </div>
                   </div>
@@ -105,6 +135,7 @@ function Popup({ seaName, onClose }) {
         </div>
       );
     } else if (activeTab === 'impact') {
+      // Impact tab content remains unchanged
       return (
         <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
           <h3 className="text-blue-800 font-medium mb-3">Potential Impact Analysis</h3>
@@ -143,6 +174,7 @@ function Popup({ seaName, onClose }) {
         </div>
       );
     } else {
+      // Mitigation tab content remains unchanged
       return (
         <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
           <h3 className="text-blue-800 font-medium mb-3">Mitigation Strategies</h3>

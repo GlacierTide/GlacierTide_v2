@@ -100,7 +100,7 @@ const Globe = () => {
         {/* Search Bar */}
         <form
           onSubmit={handleSearch}
-          style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}
+          style={{ position: 'absolute', top: 10, left: 570, zIndex: 10 }}
         >
           <input
             type="text"

@@ -4,12 +4,14 @@ import os
 import sys
 import logging
 import numpy as np
+from flask_cors import CORS  # Add this import
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Load models with correct absolute paths
 base_dir = os.path.dirname(os.path.abspath(__file__))  # D:\PBL-2(3) - Copy\glaciertide\backend
@@ -63,6 +65,11 @@ def get_prediction(sea_name, year):
     except Exception as e:
         logger.error(f"Endpoint error: {str(e)}")
         return jsonify({'error': 'Failed to process ML prediction', 'details': str(e)}), 500
+
+# Add a simple health check endpoint
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy", "message": "ML server is running"})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

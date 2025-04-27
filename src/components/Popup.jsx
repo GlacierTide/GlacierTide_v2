@@ -6,10 +6,12 @@ function Popup({ seaName, onClose }) {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('predictions');
   const [selectedModel, setSelectedModel] = useState('');
+  const [seaSpecificData, setSeaSpecificData] = useState(null);
 
   useEffect(() => {
     setIsVisible(true);
     fetchMLData();
+    setSeaSpecificData(getSeaSpecificData(seaName));
 
     const handleEscape = (e) => e.key === 'Escape' && handleCloseClick();
     window.addEventListener('keydown', handleEscape);
@@ -45,6 +47,228 @@ function Popup({ seaName, onClose }) {
 
   const handleModelChange = (e) => {
     setSelectedModel(e.target.value);
+  };
+
+  const getSeaSpecificData = (sea) => {
+    const seaData = {
+      'Arabian Sea': {
+        impact: {
+          title: 'Arabian Sea Impact Analysis',
+          riseRate: '2.8 mm/year',
+          projectedRise: '0.76 meters by 2100',
+          impacts: [
+            {
+              icon: 'warning',
+              title: 'Coastal Flooding',
+              description: 'Major coastal cities like Mumbai could experience annual flooding by 2050, affecting millions of residents and critical infrastructure.'
+            },
+            {
+              icon: 'infrastructure',
+              title: 'Infrastructure Risk',
+              description: 'Ports, coastal roads, and urban centers along the western Indian coastline face substantial damage from rising sea levels.'
+            },
+            {
+              icon: 'ecosystem',
+              title: 'Marine Heatwaves',
+              description: 'Increasing frequency of marine heatwaves threatening coral reefs and fisheries that support local economies.'
+            }
+          ]
+        },
+        mitigation: {
+          strategies: [
+            {
+              icon: 'shield',
+              title: 'Coastal Defense Systems',
+              description: 'Implementation of seawalls and breakwaters to protect densely populated urban areas like Mumbai and Karachi.'
+            },
+            {
+              icon: 'alert',
+              title: 'Managed Retreat',
+              description: 'Relocation planning for vulnerable coastal communities in Gujarat and Maharashtra regions.'
+            },
+            {
+              icon: 'nature',
+              title: 'Mangrove Restoration',
+              description: 'Expanding mangrove forests along the coastline to act as natural buffers against storm surges and erosion.'
+            }
+          ]
+        }
+      },
+      'Red Sea': {
+        impact: {
+          title: 'Red Sea Impact Analysis',
+          riseRate: '3.1 mm/year',
+          projectedRise: '0.5-0.9 meters by 2100',
+          impacts: [
+            {
+              icon: 'warning',
+              title: 'Coastal Development Threats',
+              description: 'Proposed megacity projects and rapid tourism expansion along the coast face significant risks from sea level rise and storm surges.'
+            },
+            {
+              icon: 'infrastructure',
+              title: 'Storm Surge Vulnerability',
+              description: 'Combined effects of wind speeds and atmospheric pressure create heightened storm surge risks for coastal infrastructure.'
+            },
+            {
+              icon: 'ecosystem',
+              title: 'Coral Reef Damage',
+              description: 'The unique marine environment and coral reefs of the Red Sea are threatened by changing sea levels and temperatures.'
+            }
+          ]
+        },
+        mitigation: {
+          strategies: [
+            {
+              icon: 'shield',
+              title: 'Advanced Modeling Systems',
+              description: 'Implementation of ADvanced CIRCulation (ADCIRC) storm surge modeling to predict and prepare for extreme sea-level events.'
+            },
+            {
+              icon: 'alert',
+              title: 'Climate Change Forecasting',
+              description: 'Investigating predicted changes in extreme events due to climate change impacts, in terms of both intensity and frequency.'
+            },
+            {
+              icon: 'nature',
+              title: 'Coastal Development Planning',
+              description: 'Strategic planning for coastal development that accounts for projected sea level rise and extreme weather events.'
+            }
+          ]
+        }
+      },
+      'Black Sea': {
+        impact: {
+          title: 'Black Sea Impact Analysis',
+          riseRate: '2.5 mm/year',
+          projectedRise: '0.5-0.7 meters by 2100',
+          impacts: [
+            {
+              icon: 'warning',
+              title: 'Coastal Erosion',
+              description: 'Accelerated coastal erosion and landslides threatening shoreline communities and infrastructure.'
+            },
+            {
+              icon: 'infrastructure',
+              title: 'Extreme Weather Events',
+              description: 'Increased flooding and extreme weather events connected to climate change affecting coastal regions.'
+            },
+            {
+              icon: 'ecosystem',
+              title: 'Invasive Species Threat',
+              description: 'Rising sea temperatures and changing conditions facilitating the spread of non-indigenous species (NIS) and invasive alien species (IAS).'
+            }
+          ]
+        },
+        mitigation: {
+          strategies: [
+            {
+              icon: 'shield',
+              title: 'Early Warning Systems',
+              description: 'Development and improvement of monitoring and early warning systems for natural and man-made disasters.'
+            },
+            {
+              icon: 'alert',
+              title: 'Regional Cooperation',
+              description: 'Implementation of the Common Maritime Agenda for the Black Sea to coordinate protection efforts across bordering nations.'
+            },
+            {
+              icon: 'nature',
+              title: 'Green Recovery Actions',
+              description: 'Development and implementation of green recovery actions contributing to climate change adaptation in the Black Sea Basin area.'
+            }
+          ]
+        }
+      },
+      'Caribbean Sea': {
+        impact: {
+          title: 'Caribbean Sea Impact Analysis',
+          riseRate: '3.4 mm/year',
+          projectedRise: 'Continued rise even with 2.0°C temperature stabilization',
+          impacts: [
+            {
+              icon: 'warning',
+              title: 'Island Vulnerability',
+              description: 'Small island nations face existential threats from rising sea levels, with potential displacement of coastal populations.'
+            },
+            {
+              icon: 'infrastructure',
+              title: 'Critical Infrastructure Loss',
+              description: 'Water treatment works, aquifers, oil refineries, power stations and tourism infrastructure at severe risk from inundation.'
+            },
+            {
+              icon: 'ecosystem',
+              title: 'Compounding Hazards',
+              description: 'Short-term events like hurricanes reduce resilience to long-term sea level changes, creating cascading impacts across economies.'
+            }
+          ]
+        },
+        mitigation: {
+          strategies: [
+            {
+              icon: 'shield',
+              title: 'Early Adaptation Planning',
+              description: 'Commence coastal protection planning within the next 15 years to complete necessary infrastructure by mid-century.'
+            },
+            {
+              icon: 'alert',
+              title: 'Insurance Policy Reform',
+              description: 'Integrate SLR into government insurance policies to enable landowners to properly assess coastal protection and retreat options.'
+            },
+            {
+              icon: 'nature',
+              title: 'Coordinated Retreat Framework',
+              description: 'Review and develop policies and legal frameworks to support coordinated retreat from high-risk coastal areas.'
+            }
+          ]
+        }
+      },
+      'default': {
+        impact: {
+          title: 'Potential Impact Analysis',
+          riseRate: '2.8 mm/year',
+          projectedRise: 'Variable by region',
+          impacts: [
+            {
+              icon: 'warning',
+              title: 'Coastal Erosion',
+              description: 'Accelerated erosion patterns in coastal areas.'
+            },
+            {
+              icon: 'infrastructure',
+              title: 'Infrastructure',
+              description: 'Potential risk to low-lying coastal infrastructure.'
+            },
+            {
+              icon: 'ecosystem',
+              title: 'Ecosystem',
+              description: 'Changes to coastal ecosystems and biodiversity.'
+            }
+          ]
+        },
+        mitigation: {
+          strategies: [
+            {
+              icon: 'shield',
+              title: 'Coastal Defenses',
+              description: 'Natural and engineered solutions to protect shorelines.'
+            },
+            {
+              icon: 'alert',
+              title: 'Early Warning Systems',
+              description: 'Monitoring and alert systems for storm surges and flooding events.'
+            },
+            {
+              icon: 'nature',
+              title: 'Ecosystem Protection',
+              description: 'Conservation of natural coastal barriers like reefs and wetlands.'
+            }
+          ]
+        }
+      }
+    };
+
+    return seaData[sea] || seaData['default'];
   };
 
   const renderLoadingSkeleton = () => (
@@ -129,74 +353,62 @@ function Popup({ seaName, onClose }) {
               Historical Trends
             </h3>
             <p className="text-gray-600 text-sm">
-              Average sea level rise over the past decade: <span className="font-semibold text-blue-700">2.8 mm/year</span>
+              Average sea level rise over the past decade: <span className="font-semibold text-blue-700">{seaSpecificData?.impact.riseRate || '2.8 mm/year'}</span>
             </p>
           </div>
         </div>
       );
     } else if (activeTab === 'impact') {
-      // Impact tab content remains unchanged
       return (
         <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
-          <h3 className="text-blue-800 font-medium mb-3">Potential Impact Analysis</h3>
+          <h3 className="text-blue-800 font-medium mb-3">{seaSpecificData?.impact.title || 'Potential Impact Analysis'}</h3>
+          <div className="mb-3 text-sm text-gray-600">
+            <p>Projected rise: <span className="font-semibold text-blue-700">{seaSpecificData?.impact.projectedRise || 'Variable by region'}</span></p>
+          </div>
           <ul className="space-y-3">
-            <li className="flex items-start gap-3">
-              <div className="bg-yellow-100 p-1 rounded-full">
-                <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <div>
-                <span className="font-medium">Coastal Erosion:</span> Accelerated erosion patterns in coastal areas adjacent to {seaName}
-              </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="bg-blue-100 p-1 rounded-full">
-                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-              <div>
-                <span className="font-medium">Infrastructure:</span> Potential risk to low-lying coastal infrastructure
-              </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="bg-green-100 p-1 rounded-full">
-                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-              </div>
-              <div>
-                <span className="font-medium">Ecosystem:</span> Changes to coastal ecosystems and biodiversity
-              </div>
-            </li>
+            {seaSpecificData?.impact.impacts.map((impact, index) => (
+              <li key={index} className="flex items-start gap-3">
+                <div className={`${impact.icon === 'warning' ? 'bg-yellow-100' : impact.icon === 'infrastructure' ? 'bg-blue-100' : 'bg-green-100'} p-1 rounded-full`}>
+                  <svg className={`w-4 h-4 ${impact.icon === 'warning' ? 'text-yellow-600' : impact.icon === 'infrastructure' ? 'text-blue-600' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    {impact.icon === 'warning' ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    ) : impact.icon === 'infrastructure' ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    )}
+                  </svg>
+                </div>
+                <div>
+                  <span className="font-medium">{impact.title}:</span> {impact.description}
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
       );
     } else {
-      // Mitigation tab content remains unchanged
       return (
         <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
-          <h3 className="text-blue-800 font-medium mb-3">Mitigation Strategies</h3>
+          <h3 className="text-blue-800 font-medium mb-3">Mitigation Strategies for {seaName}</h3>
           <div className="space-y-3">
-            <div className="bg-blue-50 p-3 rounded-md flex items-start gap-2">
-              <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-              <div>
-                <span className="font-medium block">Coastal Defenses:</span>
-                <p className="text-sm text-gray-600">Natural and engineered solutions to protect shorelines.</p>
+            {seaSpecificData?.mitigation.strategies.map((strategy, index) => (
+              <div key={index} className="bg-blue-50 p-3 rounded-md flex items-start gap-2">
+                <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  {strategy.icon === 'shield' ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  ) : strategy.icon === 'alert' ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  )}
+                </svg>
+                <div>
+                  <span className="font-medium block">{strategy.title}:</span>
+                  <p className="text-sm text-gray-600">{strategy.description}</p>
+                </div>
               </div>
-            </div>
-            <div className="bg-blue-50 p-3 rounded-md flex items-start gap-2">
-              <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <span className="font-medium block">Early Warning Systems:</span>
-                <p className="text-sm text-gray-600">Monitoring and alert systems for storm surges and flooding events.</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       );

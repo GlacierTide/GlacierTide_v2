@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 8800;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: 'http://localhost:5174', // Updated to match new Vite port
+    origin: 'http://localhost:5173', // Updated to match new Vite port
     credentials: true,
 }));
 

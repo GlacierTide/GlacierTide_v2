@@ -300,7 +300,7 @@ const PredictionTool = () => {
                         This prediction tool uses trained machine learning models to forecast sea level changes. Results show estimated sea level rise in millimeters over time based on the selected model and regional factors.
                       </p>
                     </div>
-                    
+{/*                     
                     <div className="flex items-center space-x-3">
                       <span className="inline-block w-3 h-3 bg-blue-600 rounded-full"></span>
                       <span className="text-sm text-gray-600">Historical Data</span>
@@ -311,7 +311,7 @@ const PredictionTool = () => {
                     </div>
                     <div className="text-sm text-gray-500 italic">
                       Note: Dotted lines represent predicted future values.
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 

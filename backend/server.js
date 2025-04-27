@@ -8,13 +8,31 @@ const { URL } = require('url'); // For URL parsing
 const app = express();
 const PORT = process.env.PORT || 8800;
 
+// Allowed origins
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174']; // Add all your frontend ports here
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: 'http://localhost:5174', // Updated to match new Vite port
+    origin: function(origin, callback) {
+        // Allow requests with no origin (like mobile apps or Postman)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
 }));
+
+const authController = require('./controllers/authController');  // Ensure path is correct
+
+// Add the routes for signup and login
+app.post('/api/auth/signup', authController.signup);
+app.post('/api/auth/login', authController.login);
+app.get('/api/auth/verify-email', authController.verifyEmail);
+
 
 // Proxy requests to Flask API
 app.get('/api/ml/predict/:seaName/:year', (req, res) => {
@@ -52,3 +70,4 @@ app.use((err, req, res, next) => {
     console.error('Global error handler:', err.stack);
     res.status(500).json({ error: 'Something went wrong!', details: err.message });
 });
+

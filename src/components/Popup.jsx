@@ -8,6 +8,51 @@ function Popup({ seaName, onClose }) {
   const [selectedModel, setSelectedModel] = useState('');
   const [seaSpecificData, setSeaSpecificData] = useState(null);
 
+  // Constants from PredictionTool.jsx
+  const GLOBAL_SEA_RISE_RATE = 3.2; // mm/year
+  
+  // Sea regions with multipliers from PredictionTool.jsx
+  const seaRegions = {
+    'Arabian Sea': {
+      id: 'arabiansea',
+      name: 'Arabian Sea',
+      multiplier: 1.0
+    },
+    'Caribbean Sea': {
+      id: 'caribbean',
+      name: 'Caribbean Sea',
+      multiplier: 0.85
+    },
+    'Philippine Sea': {
+      id: 'philippine',
+      name: 'Philippine Sea',
+      multiplier: 2.05
+    },
+    'Coral Sea': {
+      id: 'coral',
+      name: 'Coral Sea',
+      multiplier: 1.1
+    },
+    'Labrador Sea': {
+      id: 'labrador',
+      name: 'Labrador Sea',
+      multiplier: 0.85
+    },
+    'Barents Sea': {
+      id: 'barents',
+      name: 'Barents Sea',
+      multiplier: 1.2
+    }
+  };
+
+  // Available prediction models from PredictionTool.jsx
+  const predictionModels = [
+    { id: 'linear', name: 'Linear Regression' },
+    { id: 'decision_tree', name: 'Decision Tree' },
+    { id: 'random_forest', name: 'Random Forest' },
+    { id: 'xgboost', name: 'XGBoost' }
+  ];
+
   useEffect(() => {
     setIsVisible(true);
     fetchMLData();
@@ -27,10 +72,17 @@ function Popup({ seaName, onClose }) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setMlData(data);
+      
+      // Filter out the 'years' option from the data
+      const filteredData = Object.fromEntries(
+        Object.entries(data).filter(([key]) => key !== 'years')
+      );
+      
+      setMlData(filteredData);
+      
       // Set the first model as default selected model
-      if (data && !data.error && Object.keys(data).length > 0) {
-        setSelectedModel(Object.keys(data)[0]);
+      if (filteredData && !filteredData.error && Object.keys(filteredData).length > 0) {
+        setSelectedModel(Object.keys(filteredData)[0]);
       }
     } catch (error) {
       console.error('Error fetching ML data:', error);
@@ -49,13 +101,28 @@ function Popup({ seaName, onClose }) {
     setSelectedModel(e.target.value);
   };
 
+  // Helper function to safely format prediction values
+  const formatPredictionValue = (value) => {
+    // Check if value is a valid number
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) {
+      return "N/A"; // Return "N/A" if not a valid number
+    }
+    return numValue.toFixed(3) + " mm"; // Format to 3 decimal places
+  };
+
   const getSeaSpecificData = (sea) => {
+    const region = Object.values(seaRegions).find(r => r.name === sea);
+    const multiplier = region ? region.multiplier : 1.0;
+    const riseRate = (GLOBAL_SEA_RISE_RATE * multiplier).toFixed(1);
+    const projectedRise = ((GLOBAL_SEA_RISE_RATE * multiplier * 75) / 1000).toFixed(2); // 75 years to 2100
+
     const seaData = {
       'Arabian Sea': {
         impact: {
           title: 'Arabian Sea Impact Analysis',
-          riseRate: '2.8 mm/year',
-          projectedRise: '0.76 meters by 2100',
+          riseRate: `${riseRate} mm/year`,
+          projectedRise: `${projectedRise} meters by 2100`,
           impacts: [
             {
               icon: 'warning',
@@ -94,26 +161,26 @@ function Popup({ seaName, onClose }) {
           ]
         }
       },
-      'Red Sea': {
+      'Coral Sea': {
         impact: {
-          title: 'Red Sea Impact Analysis',
-          riseRate: '3.1 mm/year',
-          projectedRise: '0.5-0.9 meters by 2100',
+          title: 'Coral Sea Impact Analysis',
+          riseRate: `${riseRate} mm/year`,
+          projectedRise: `${projectedRise} meters by 2100`,
           impacts: [
             {
               icon: 'warning',
-              title: 'Coastal Development Threats',
-              description: 'Proposed megacity projects and rapid tourism expansion along the coast face significant risks from sea level rise and storm surges.'
+              title: 'Reef Degradation',
+              description: 'The Great Barrier Reef faces severe bleaching events and degradation due to rising sea temperatures and changing ocean chemistry.'
             },
             {
               icon: 'infrastructure',
-              title: 'Storm Surge Vulnerability',
-              description: 'Combined effects of wind speeds and atmospheric pressure create heightened storm surge risks for coastal infrastructure.'
+              title: 'Coastal Tourism Impact',
+              description: 'Multi-billion dollar tourism industry threatened by reef degradation and increased storm activity along Queensland coast.'
             },
             {
               icon: 'ecosystem',
-              title: 'Coral Reef Damage',
-              description: 'The unique marine environment and coral reefs of the Red Sea are threatened by changing sea levels and temperatures.'
+              title: 'Marine Biodiversity Loss',
+              description: 'Critical habitat for thousands of marine species at risk, with cascading effects throughout the marine food web.'
             }
           ]
         },
@@ -121,42 +188,42 @@ function Popup({ seaName, onClose }) {
           strategies: [
             {
               icon: 'shield',
-              title: 'Advanced Modeling Systems',
-              description: 'Implementation of ADvanced CIRCulation (ADCIRC) storm surge modeling to predict and prepare for extreme sea-level events.'
+              title: 'Reef Restoration Programs',
+              description: 'Large-scale coral propagation and transplantation efforts to rebuild damaged reef systems and enhance resilience.'
             },
             {
               icon: 'alert',
-              title: 'Climate Change Forecasting',
-              description: 'Investigating predicted changes in extreme events due to climate change impacts, in terms of both intensity and frequency.'
+              title: 'Water Quality Improvement',
+              description: 'Reducing agricultural runoff and improving coastal water quality to minimize additional stressors on reef ecosystems.'
             },
             {
               icon: 'nature',
-              title: 'Coastal Development Planning',
-              description: 'Strategic planning for coastal development that accounts for projected sea level rise and extreme weather events.'
+              title: 'Marine Protected Areas',
+              description: 'Expanding and strengthening the network of marine protected areas to provide refuge for vulnerable species.'
             }
           ]
         }
       },
-      'Black Sea': {
+      'Philippine Sea': {
         impact: {
-          title: 'Black Sea Impact Analysis',
-          riseRate: '2.5 mm/year',
-          projectedRise: '0.5-0.7 meters by 2100',
+          title: 'Philippine Sea Impact Analysis',
+          riseRate: `${riseRate} mm/year`,
+          projectedRise: `${projectedRise} meters by 2100`,
           impacts: [
             {
               icon: 'warning',
-              title: 'Coastal Erosion',
-              description: 'Accelerated coastal erosion and landslides threatening shoreline communities and infrastructure.'
+              title: 'Island Vulnerability',
+              description: 'Many low-lying islands in the Philippine archipelago face partial or complete submersion with continued sea level rise.'
             },
             {
               icon: 'infrastructure',
-              title: 'Extreme Weather Events',
-              description: 'Increased flooding and extreme weather events connected to climate change affecting coastal regions.'
+              title: 'Urban Flooding',
+              description: 'Major coastal cities like Manila experiencing increased flooding frequency, with over 13 million people at elevated risk.'
             },
             {
               icon: 'ecosystem',
-              title: 'Invasive Species Threat',
-              description: 'Rising sea temperatures and changing conditions facilitating the spread of non-indigenous species (NIS) and invasive alien species (IAS).'
+              title: 'Mangrove Migration',
+              description: 'Coastal mangrove ecosystems unable to migrate inland due to urban development, leading to habitat loss.'
             }
           ]
         },
@@ -164,18 +231,61 @@ function Popup({ seaName, onClose }) {
           strategies: [
             {
               icon: 'shield',
-              title: 'Early Warning Systems',
-              description: 'Development and improvement of monitoring and early warning systems for natural and man-made disasters.'
+              title: 'Typhoon-Resistant Infrastructure',
+              description: 'Developing and implementing building codes that account for increased storm intensity and sea level rise.'
             },
             {
               icon: 'alert',
-              title: 'Regional Cooperation',
-              description: 'Implementation of the Common Maritime Agenda for the Black Sea to coordinate protection efforts across bordering nations.'
+              title: 'Early Warning Systems',
+              description: 'Enhanced monitoring and communication networks to provide timely alerts for extreme weather events.'
             },
             {
               icon: 'nature',
-              title: 'Green Recovery Actions',
-              description: 'Development and implementation of green recovery actions contributing to climate change adaptation in the Black Sea Basin area.'
+              title: 'Coastal Ecosystem Restoration',
+              description: 'Rehabilitating mangroves, seagrass beds, and coral reefs to provide natural coastal protection.'
+            }
+          ]
+        }
+      },
+      'Barents Sea': {
+        impact: {
+          title: 'Barents Sea Impact Analysis',
+          riseRate: `${riseRate} mm/year`,
+          projectedRise: `${projectedRise} meters by 2100`,
+          impacts: [
+            {
+              icon: 'warning',
+              title: 'Arctic Amplification',
+              description: 'Warming at twice the global average rate, leading to accelerated ice loss and changing ocean circulation patterns.'
+            },
+            {
+              icon: 'infrastructure',
+              title: 'Shipping Route Changes',
+              description: 'Opening of new shipping routes as sea ice retreats, creating both economic opportunities and environmental risks.'
+            },
+            {
+              icon: 'ecosystem',
+              title: 'Ecosystem Shifts',
+              description: 'Boreal species moving northward, disrupting the Arctic food web and affecting indigenous communities.'
+            }
+          ]
+        },
+        mitigation: {
+          strategies: [
+            {
+              icon: 'shield',
+              title: 'International Cooperation',
+              description: 'Strengthening Arctic Council governance to manage new shipping routes and resource extraction sustainably.'
+            },
+            {
+              icon: 'alert',
+              title: 'Climate Monitoring',
+              description: 'Expanding the network of monitoring stations to track changes in sea ice, ocean temperature, and marine ecosystems.'
+            },
+            {
+              icon: 'nature',
+              title: 'Protected Marine Areas',
+              description: 'Establishing marine protected areas in newly ice-free regions before commercial exploitation begins.'
             }
           ]
         }
@@ -183,8 +293,8 @@ function Popup({ seaName, onClose }) {
       'Caribbean Sea': {
         impact: {
           title: 'Caribbean Sea Impact Analysis',
-          riseRate: '3.4 mm/year',
-          projectedRise: 'Continued rise even with 2.0°C temperature stabilization',
+          riseRate: `${riseRate} mm/year`,
+          projectedRise: `${projectedRise} meters by 2100`,
           impacts: [
             {
               icon: 'warning',
@@ -223,10 +333,53 @@ function Popup({ seaName, onClose }) {
           ]
         }
       },
+      'Labrador Sea': {
+        impact: {
+          title: 'Labrador Sea Impact Analysis',
+          riseRate: `${riseRate} mm/year`,
+          projectedRise: `${projectedRise} meters by 2100`,
+          impacts: [
+            {
+              icon: 'warning',
+              title: 'Thermohaline Circulation',
+              description: 'Changes in deep water formation affecting the Atlantic Meridional Overturning Circulation, with potential global climate impacts.'
+            },
+            {
+              icon: 'infrastructure',
+              title: 'Coastal Communities',
+              description: 'Remote coastal communities in Labrador and Greenland facing increased erosion and infrastructure damage from storm surges.'
+            },
+            {
+              icon: 'ecosystem',
+              title: 'Marine Mammal Habitat',
+              description: 'Critical habitat for whales, seals, and polar bears disrupted by changing sea ice patterns and ocean temperatures.'
+            }
+          ]
+        },
+        mitigation: {
+          strategies: [
+            {
+              icon: 'shield',
+              title: 'Climate Monitoring',
+              description: 'Enhanced monitoring of ocean circulation patterns and deep water formation to improve climate models.'
+            },
+            {
+              icon: 'alert',
+              title: 'Indigenous Knowledge',
+              description: 'Incorporating traditional ecological knowledge from Inuit and other indigenous communities into adaptation planning.'
+            },
+            {
+              icon: 'nature',
+              title: 'Sustainable Fisheries',
+              description: 'Implementing adaptive fisheries management to respond to shifting species distributions and changing ecosystem dynamics.'
+            }
+          ]
+        }
+      },
       'default': {
         impact: {
           title: 'Potential Impact Analysis',
-          riseRate: '2.8 mm/year',
+          riseRate: `${GLOBAL_SEA_RISE_RATE} mm/year`,
           projectedRise: 'Variable by region',
           impacts: [
             {
@@ -306,9 +459,9 @@ function Popup({ seaName, onClose }) {
                         onChange={handleModelChange}
                         className="w-full p-2 border border-blue-300 rounded-md bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-800"
                       >
-                        {Object.keys(mlData).map((model) => (
-                          <option key={model} value={model}>
-                            {model}
+                        {predictionModels.map((model) => (
+                          <option key={model.id} value={model.id}>
+                            {model.name}
                           </option>
                         ))}
                       </select>
@@ -318,9 +471,11 @@ function Popup({ seaName, onClose }) {
                       <div className="bg-blue-100 p-4 rounded-md flex items-center justify-between">
                         <div className="flex items-center">
                           <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-                          <span className="text-gray-700 font-medium">{selectedModel}:</span>
+                          <span className="text-gray-700 font-medium">{predictionModels.find(m => m.id === selectedModel)?.name}:</span>
                         </div>
-                        <span className="text-blue-900 font-bold text-lg">{mlData[selectedModel]} mm</span>
+                        <span className="text-blue-900 font-bold text-lg">
+                          {formatPredictionValue(mlData[selectedModel])}
+                        </span>
                       </div>
                     )}
                     
@@ -329,7 +484,7 @@ function Popup({ seaName, onClose }) {
                         <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <p>This prediction shows estimated sea level change for {seaName} over the next 20 years based on the selected climate model.</p>
+                        <p>This prediction shows estimated sea level change for {seaName} over the next 20 years based on the selected climate model. The global sea level rise rate is {GLOBAL_SEA_RISE_RATE} mm/year with a regional multiplier of {seaRegions[seaName]?.multiplier || 1.0}x.</p>
                       </div>
                     </div>
                   </div>
@@ -353,7 +508,7 @@ function Popup({ seaName, onClose }) {
               Historical Trends
             </h3>
             <p className="text-gray-600 text-sm">
-              Average sea level rise over the past decade: <span className="font-semibold text-blue-700">{seaSpecificData?.impact.riseRate || '2.8 mm/year'}</span>
+              Average sea level rise over the past decade: <span className="font-semibold text-blue-700">{seaSpecificData?.impact.riseRate || `${GLOBAL_SEA_RISE_RATE} mm/year`}</span>
             </p>
           </div>
         </div>

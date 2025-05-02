@@ -39,7 +39,7 @@ except Exception as e:
     logger.error(f"Failed to load sea level data: {str(e)}")
     # Create dummy data if file not found
     years = list(range(1993, 2022))
-    sea_level_rise = [i * 3.4 for i in range(len(years))]  # Approx 3.4mm/year
+    sea_level_rise = [i * 3.2 for i in range(len(years))]  # Approx 3.2mm/year
     annual_data = pd.DataFrame({'Year': years, 'SeaLevelRise': sea_level_rise})
     logger.warning("Using dummy sea level data")
 

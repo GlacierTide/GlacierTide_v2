@@ -16,7 +16,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a 
-                href="https://github.com" 
+                href="https://github.com/GlacierTide/GlacierTide_v2/tree/ml" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="footer-link"
@@ -48,6 +48,9 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/prediction-tool" className="footer-link">Prediction Tool</Link>
+              </li>
+              <li>
+                <Link to="/globe" className="footer-link">Globe</Link>
               </li>
               <li>
                 <Link to="/world-map" className="footer-link">World Map</Link>

@@ -1,9 +1,10 @@
 // frontend/src/pages/SignIn.jsx
 import { useState } from 'react';
 import { Layout } from '../components/Layout';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { Eye, EyeOff, ArrowRight, LogIn } from 'lucide-react';
+import { toast } from 'sonner';
 
 const SignIn = () => {
     const [email, setEmail] = useState('');
@@ -12,13 +13,17 @@ const SignIn = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
     const { login } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    // Get the page the user was trying to access
+    const from = location.state?.from?.pathname || "/";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         const trimmedEmail = email.trim().toLowerCase();
         const trimmedPassword = password.trim();
-        console.log('Sending to backend:', { email: trimmedEmail, password: trimmedPassword });
 
         try {
             const response = await fetch('http://localhost:8800/api/auth/login', {
@@ -30,7 +35,17 @@ const SignIn = () => {
             if (!response.ok) {
                 throw new Error(data.message || 'Login failed');
             }
-            login(data.userId); // Always log in with context
+            
+            login(data.userId);
+            
+            // Show success toast
+            toast.success("Successfully signed in!", {
+                duration: 3000,
+                position: "top-center",
+            });
+            
+            // Navigate to the page they were trying to access
+            navigate(from, { replace: true });
         } catch (err) {
             setError(err.message);
         }

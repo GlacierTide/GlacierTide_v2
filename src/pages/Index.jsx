@@ -43,43 +43,42 @@ const Index = () => {
               <FeatureCard 
                 icon={BarChart3} 
                 title="Prediction Tools" 
-                description="Advanced forecasting models to predict glacier changes and climate impacts."
+                description="Advanced forecasting models to predict sea level rise and glacier dynamics."
                 delay={100}
               />
               <FeatureCard 
                 icon={Globe2} 
                 title="Interactive Map" 
-                description="Explore glaciers worldwide with our detailed interactive mapping system."
+                description="Explore worldwide seas affected by glacier melts with our detailed interactive mapping system."
                 delay={200}
               />
               <FeatureCard 
                 icon={Shield} 
                 title="Climate Protection" 
-                description="Resources and strategies for glacial preservation and climate action."
+                description="Impact and Mitigation strategies for climate action."
                 delay={300}
               />
               <FeatureCard 
                 icon={Users} 
-                title="Expert Community" 
-                description="Connect with researchers, climate scientists, and activists."
+                title="Engaging 3D Model" 
+                description="Get in-depth sea data dynamics with our interactive 3D Earth Model."
                 delay={400}
               />
             </div>
           </div>
         </section>
         
-        {/* Call to Action */}
         <section className="py-20 bg-glacier-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">
-                Join the GlacierTide Community
+                Know more about our mission
               </h2>
               <p className="text-gray-500 text-lg mb-8">
-                Be part of the global effort to understand and protect our planet's most precious frozen resources. Sign up today for exclusive access to our tools and research.
+                GlacierTide is dedicated to understanding, predicting, and preserving the world's glaciers through innovation and collaboration.
               </p>
-              <Link to="/sign-up" className="btn-primary inline-flex items-center group">
-                Get Started
+              <Link to="/about" className="btn-primary inline-flex items-center group">
+                Learn More
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>

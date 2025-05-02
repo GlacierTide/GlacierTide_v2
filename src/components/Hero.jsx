@@ -41,16 +41,14 @@ const Hero = () => {
         </h1>
         
         <p className="text-xl md:text-2xl text-black max-w-3xl mx-auto animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-          Monitoring, predicting, and preserving our planet's glaciers with advanced technology and research.
+          Understanding, predicting and preserving our planet's glaciers with advanced technology and research.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
           <Link to="/sign-up" className="btn-primary">
-            Join Our Community
+            Join Us
           </Link>
-          <Link to="/about" className="btn-secondary">
-            Learn More
-          </Link>
+          
         </div>
       </div>
       

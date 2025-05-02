@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Chart } from 'chart.js/auto';
 
 function Popup({ seaName, onClose }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -7,6 +8,9 @@ function Popup({ seaName, onClose }) {
   const [activeTab, setActiveTab] = useState('predictions');
   const [selectedModel, setSelectedModel] = useState('');
   const [seaSpecificData, setSeaSpecificData] = useState(null);
+  const [chartView, setChartView] = useState('2D');
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null);
 
   // Constants from PredictionTool.jsx
   const GLOBAL_SEA_RISE_RATE = 3.2; // mm/year
@@ -62,6 +66,133 @@ function Popup({ seaName, onClose }) {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [seaName]);
+
+  useEffect(() => {
+    if (mlData && !mlData.error && selectedModel) {
+      renderChart();
+    }
+    
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+      }
+    };
+  }, [mlData, selectedModel, chartView]);
+
+  const renderChart = () => {
+    if (!chartRef.current) return;
+    
+    if (chartInstance.current) {
+      chartInstance.current.destroy();
+    }
+    
+    const ctx = chartRef.current.getContext('2d');
+    
+    // Generate years for the next 20 years
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({length: 21}, (_, i) => currentYear + i);
+    
+    // Generate data points based on the selected model
+    // This is a simplified example - in a real app, you'd use actual projection data
+    const baseValue = parseFloat(mlData[selectedModel]) / 20; // Divide by 20 to get annual increase
+    const dataPoints = years.map((_, index) => baseValue * index);
+    
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
+    
+    chartInstance.current = new Chart(ctx, {
+      type: chartView === '3D' ? 'bar' : 'line',
+      data: {
+        labels: years,
+        datasets: [{
+          label: `${predictionModels.find(m => m.id === selectedModel)?.name} Projection`,
+          data: dataPoints,
+          borderColor: 'rgba(59, 130, 246, 1)',
+          backgroundColor: gradient,
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+          pointBorderColor: '#fff',
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 12
+              }
+            }
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            titleColor: '#1e40af',
+            bodyColor: '#1e3a8a',
+            borderColor: 'rgba(59, 130, 246, 0.3)',
+            borderWidth: 1,
+            padding: 12,
+            boxPadding: 6,
+            usePointStyle: true,
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label}: ${context.parsed.y.toFixed(3)} mm`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11
+              },
+              maxRotation: 45,
+              minRotation: 45
+            }
+          },
+          y: {
+            grid: {
+              color: 'rgba(59, 130, 246, 0.1)'
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11
+              },
+              callback: function(value) {
+                return value.toFixed(2) + ' mm';
+              }
+            }
+          }
+        },
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        },
+        animations: {
+          tension: {
+            duration: 1000,
+            easing: 'easeInOutQuad'
+          }
+        }
+      }
+    });
+  };
 
   const fetchMLData = async () => {
     setIsLoading(true);
@@ -436,10 +567,10 @@ function Popup({ seaName, onClose }) {
   const renderContent = () => {
     if (activeTab === 'predictions') {
       return (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
-            <h3 className="text-blue-800 font-medium mb-3 flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <div className="space-y-6">
+          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/20">
+            <h3 className="text-blue-800 font-medium mb-4 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
               ML Predictions (20 Years)
@@ -448,38 +579,68 @@ function Popup({ seaName, onClose }) {
             {isLoading ? renderLoadingSkeleton() : (
               <>
                 {mlData && !mlData.error ? (
-                  <div className="space-y-3">
+                  <div className="space-y-5">
                     <div className="mb-4">
-                      <label htmlFor="model-select" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="model-select" className="block text-sm font-medium text-gray-700 mb-2">
                         Select Prediction Model:
                       </label>
-                      <select
-                        id="model-select"
-                        value={selectedModel}
-                        onChange={handleModelChange}
-                        className="w-full p-2 border border-blue-300 rounded-md bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-800"
-                      >
-                        {predictionModels.map((model) => (
-                          <option key={model.id} value={model.id}>
-                            {model.name}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <select
+                          id="model-select"
+                          value={selectedModel}
+                          onChange={handleModelChange}
+                          className="w-full p-3 pr-10 border border-blue-300 rounded-lg bg-blue-50/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 appearance-none"
+                        >
+                          {predictionModels.map((model) => (
+                            <option key={model.id} value={model.id}>
+                              {model.name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="relative h-48 w-full mb-4 bg-white/80 backdrop-blur-sm rounded-lg p-2 shadow-inner">
+                      <canvas ref={chartRef} className="w-full h-full"></canvas>
+                      <div className="absolute top-2 right-2 flex space-x-2">
+                        <button 
+                          className={`p-1.5 text-xs rounded-full transition-all ${chartView === '2D' ? 'bg-blue-600 text-white' : 'bg-white/70 text-blue-600 hover:bg-blue-100'}`} 
+                          onClick={() => setChartView('2D')}
+                        >
+                          2D
+                        </button>
+                        <button 
+                          className={`p-1.5 text-xs rounded-full transition-all ${chartView === '3D' ? 'bg-blue-600 text-white' : 'bg-white/70 text-blue-600 hover:bg-blue-100'}`} 
+                          onClick={() => setChartView('3D')}
+                        >
+                          3D
+                        </button>
+                      </div>
                     </div>
                     
                     {selectedModel && (
-                      <div className="bg-blue-100 p-4 rounded-md flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
-                          <span className="text-gray-700 font-medium">{predictionModels.find(m => m.id === selectedModel)?.name}:</span>
+                      <div className="bg-blue-50/70 backdrop-blur-sm p-4 rounded-lg flex flex-col">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                            <span className="text-gray-700 font-medium">{predictionModels.find(m => m.id === selectedModel)?.name}</span>
+                          </div>
+                          <span className="text-blue-900 font-bold text-xl">
+                            {formatPredictionValue(mlData[selectedModel])}
+                          </span>
                         </div>
-                        <span className="text-blue-900 font-bold text-lg">
-                          {formatPredictionValue(mlData[selectedModel])}
-                        </span>
+                        {/* <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                          <div className="bg-gradient-to-r from-blue-400 to-blue-600 h-2.5 rounded-full" style={{ width: `${Math.min(100, (parseFloat(mlData[selectedModel]) / 100) * 100)}%` }}></div>
+                        </div> */}
                       </div>
                     )}
                     
-                    <div className="bg-blue-50 p-3 rounded-md text-sm text-blue-700 mt-4">
+                    <div className="bg-blue-50/70 backdrop-blur-sm p-4 rounded-lg text-sm text-blue-700 mt-4">
                       <div className="flex items-start gap-2">
                         <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -489,7 +650,7 @@ function Popup({ seaName, onClose }) {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-red-50 p-4 rounded-md text-red-700 flex items-center">
+                  <div className="bg-red-50/80 backdrop-blur-sm p-4 rounded-md text-red-700 flex items-center">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -500,31 +661,39 @@ function Popup({ seaName, onClose }) {
             )}
           </div>
           
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
-            <h3 className="text-blue-800 font-medium mb-3 flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <div className="bg-white/70 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/20">
+            <h3 className="text-blue-800 font-medium mb-4 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               Historical Trends
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-700">
               Average sea level rise over the past decade: <span className="font-semibold text-blue-700">{seaSpecificData?.impact.riseRate || `${GLOBAL_SEA_RISE_RATE} mm/year`}</span>
             </p>
+            
+            {/* <div className="mt-4 bg-blue-50/70 backdrop-blur-sm p-4 rounded-lg">
+              <h4 className="font-medium text-blue-800 mb-2">AI Insights</h4>
+              <p className="text-sm text-blue-700">
+                Based on your interest in {seaName}, you might want to explore how sea level rise impacts coastal communities in similar regions. Our data shows that areas with similar characteristics are experiencing comparable challenges.
+              </p>
+            </div> */}
           </div>
         </div>
       );
     } else if (activeTab === 'impact') {
       return (
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
-          <h3 className="text-blue-800 font-medium mb-3">{seaSpecificData?.impact.title || 'Potential Impact Analysis'}</h3>
-          <div className="mb-3 text-sm text-gray-600">
+        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/20">
+          <h3 className="text-blue-800 font-medium mb-4">{seaSpecificData?.impact.title || 'Potential Impact Analysis'}</h3>
+          <div className="mb-4 text-gray-700">
             <p>Projected rise: <span className="font-semibold text-blue-700">{seaSpecificData?.impact.projectedRise || 'Variable by region'}</span></p>
           </div>
-          <ul className="space-y-3">
+          
+          <div className="grid grid-cols-1 gap-4 mt-6">
             {seaSpecificData?.impact.impacts.map((impact, index) => (
-              <li key={index} className="flex items-start gap-3">
-                <div className={`${impact.icon === 'warning' ? 'bg-yellow-100' : impact.icon === 'infrastructure' ? 'bg-blue-100' : 'bg-green-100'} p-1 rounded-full`}>
-                  <svg className={`w-4 h-4 ${impact.icon === 'warning' ? 'text-yellow-600' : impact.icon === 'infrastructure' ? 'text-blue-600' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <div key={index} className="bg-white/80 backdrop-blur-sm p-5 rounded-lg border border-blue-100/50 shadow-sm hover:shadow-md transition-shadow duration-200 flex items-start gap-4 transform hover:-translate-y-1 transition-transform">
+                <div className={`p-3 rounded-full ${impact.icon === 'warning' ? 'bg-yellow-100' : impact.icon === 'infrastructure' ? 'bg-blue-100' : 'bg-green-100'} flex-shrink-0`}>
+                  <svg className={`w-6 h-6 ${impact.icon === 'warning' ? 'text-yellow-600' : impact.icon === 'infrastructure' ? 'text-blue-600' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     {impact.icon === 'warning' ? (
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     ) : impact.icon === 'infrastructure' ? (
@@ -535,35 +704,69 @@ function Popup({ seaName, onClose }) {
                   </svg>
                 </div>
                 <div>
-                  <span className="font-medium">{impact.title}:</span> {impact.description}
+                  <span className="font-medium text-gray-800 block mb-2 text-lg">{impact.title}</span> 
+                  <p className="text-gray-600">{impact.description}</p>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
+          
+          <div className="mt-6 bg-blue-50/70 backdrop-blur-sm p-4 rounded-lg">
+            <h4 className="font-medium text-blue-800 mb-2 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Risk Assessment
+            </h4>
+            <p className="text-sm text-blue-700">
+              The impacts shown above are based on current scientific consensus and regional modeling. Actual outcomes may vary based on global mitigation efforts and regional adaptation strategies.
+            </p>
+          </div>
         </div>
       );
     } else {
       return (
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-blue-100">
-          <h3 className="text-blue-800 font-medium mb-3">Mitigation Strategies for {seaName}</h3>
-          <div className="space-y-3">
+        <div className="bg-white/70 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-white/20">
+          <h3 className="text-blue-800 font-medium mb-4">Mitigation Strategies for {seaName}</h3>
+          
+          <div className="space-y-5 mt-6">
             {seaSpecificData?.mitigation.strategies.map((strategy, index) => (
-              <div key={index} className="bg-blue-50 p-3 rounded-md flex items-start gap-2">
-                <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  {strategy.icon === 'shield' ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  ) : strategy.icon === 'alert' ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  )}
-                </svg>
+              <div key={index} className="bg-gradient-to-br from-blue-50/90 to-blue-100/50 backdrop-blur-sm p-5 rounded-lg flex items-start gap-4 transform hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md">
+                <div className={`p-3 rounded-full ${strategy.icon === 'shield' ? 'bg-blue-100' : strategy.icon === 'alert' ? 'bg-yellow-100' : 'bg-green-100'} flex-shrink-0`}>
+                  <svg className={`w-6 h-6 ${strategy.icon === 'shield' ? 'text-blue-600' : strategy.icon === 'alert' ? 'text-yellow-600' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    {strategy.icon === 'shield' ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    ) : strategy.icon === 'alert' ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    )}
+                  </svg>
+                </div>
                 <div>
-                  <span className="font-medium block">{strategy.title}:</span>
-                  <p className="text-sm text-gray-600">{strategy.description}</p>
+                  <span className="font-medium block text-gray-800 mb-2 text-lg">{strategy.title}</span>
+                  <p className="text-gray-600">{strategy.description}</p>
+                  
+                  <div className="mt-3 flex">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      Recommended
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
+          </div>
+          
+          <div className="mt-6 bg-blue-50/70 backdrop-blur-sm p-4 rounded-lg">
+            <h4 className="font-medium text-blue-800 mb-2 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Implementation Timeline
+            </h4>
+            <p className="text-sm text-blue-700">
+              These mitigation strategies should be implemented within the next 5-10 years to effectively address the projected sea level rise impacts. Early action will significantly reduce long-term costs and damages.
+            </p>
           </div>
         </div>
       );
@@ -571,11 +774,11 @@ function Popup({ seaName, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-blue-900/50 backdrop-blur-sm z-40 flex items-center justify-center transition-opacity duration-300 ease-in-out"
+    <div className="fixed inset-0 bg-blue-900/40 backdrop-blur-lg z-40 flex items-center justify-center transition-opacity duration-300 ease-in-out p-4 sm:p-0"
          style={{ opacity: isVisible ? 1 : 0 }}>
-      <div className={`bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-2xl max-w-lg w-11/12 transform transition-all duration-300 ease-out ${isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'} border border-blue-200 overflow-hidden`}>
+      <div className={`bg-white/70 backdrop-blur-md rounded-2xl shadow-xl w-full max-w-2xl transform transition-all duration-300 ease-out ${isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'} border border-white/20 overflow-hidden max-h-[83vh] flex flex-col`}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 p-4 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 p-5 relative overflow-hidden">
           <div className="absolute inset-0 opacity-20">
             <svg className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M0 50C20 30 40 45 60 50C80 55 100 35 120 50C140 65 160 50 180 40C200 30 220 45 240 60" 
@@ -592,7 +795,7 @@ function Popup({ seaName, onClose }) {
             </h2>
             <button 
               onClick={handleCloseClick}
-              className="text-white/80 hover:text-white p-1 rounded-full hover:bg-blue-500/30 transition-colors"
+              className="text-white/80 hover:text-white p-2 rounded-full hover:bg-blue-500/30 transition-colors"
               aria-label="Close popup"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -603,9 +806,9 @@ function Popup({ seaName, onClose }) {
         </div>
         
         {/* Tab Navigation */}
-        <div className="bg-blue-100/50 border-b border-blue-200 flex">
+        <div className="bg-blue-100/50 backdrop-blur-sm border-b border-blue-200/50 flex">
           <button 
-            className={`py-3 px-4 text-sm font-medium transition-colors relative ${activeTab === 'predictions' ? 'text-blue-700' : 'text-blue-500 hover:text-blue-600'}`}
+            className={`py-4 px-5 text-sm font-medium transition-all duration-200 relative ${activeTab === 'predictions' ? 'text-blue-700 bg-white/50 backdrop-blur-sm' : 'text-blue-500 hover:text-blue-600 hover:bg-white/30'}`}
             onClick={() => setActiveTab('predictions')}
           >
             Predictions
@@ -614,7 +817,7 @@ function Popup({ seaName, onClose }) {
             )}
           </button>
           <button 
-            className={`py-3 px-4 text-sm font-medium transition-colors relative ${activeTab === 'impact' ? 'text-blue-700' : 'text-blue-500 hover:text-blue-600'}`}
+            className={`py-4 px-5 text-sm font-medium transition-all duration-200 relative ${activeTab === 'impact' ? 'text-blue-700 bg-white/50 backdrop-blur-sm' : 'text-blue-500 hover:text-blue-600 hover:bg-white/30'}`}
             onClick={() => setActiveTab('impact')}
           >
             Impact
@@ -623,7 +826,7 @@ function Popup({ seaName, onClose }) {
             )}
           </button>
           <button 
-            className={`py-3 px-4 text-sm font-medium transition-colors relative ${activeTab === 'mitigation' ? 'text-blue-700' : 'text-blue-500 hover:text-blue-600'}`}
+            className={`py-4 px-5 text-sm font-medium transition-all duration-200 relative ${activeTab === 'mitigation' ? 'text-blue-700 bg-white/50 backdrop-blur-sm' : 'text-blue-500 hover:text-blue-600 hover:bg-white/30'}`}
             onClick={() => setActiveTab('mitigation')}
           >
             Mitigation
@@ -634,24 +837,29 @@ function Popup({ seaName, onClose }) {
         </div>
         
         {/* Content Area */}
-        <div className="p-6 max-h-96 overflow-y-auto">
-          {renderContent()}
+        <div className="overflow-y-auto flex-grow bg-gradient-to-br from-blue-50/30 to-white/30 backdrop-blur-sm">
+          <div className="p-6 max-h-[calc(100vh-250px)]">
+            {renderContent()}
+          </div>
         </div>
         
         {/* Footer */}
-        <div className="border-t border-blue-200 p-4 bg-blue-50/70 flex justify-between items-center">
+        <div className="border-t border-blue-200/50 p-4 bg-blue-50/70 backdrop-blur-sm flex justify-between items-center">
           <div className="text-xs text-blue-600">
-            <span className="font-medium">Data updated:</span> {new Date().toLocaleDateString()}
+            <span className="font-medium">Data updated:</span> May 3, 2025
           </div>
-          <button 
-            onClick={handleCloseClick} 
-            className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center text-sm font-medium"
-          >
-            Close
-            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div className="flex space-x-3">
+           
+            <button 
+              onClick={handleCloseClick} 
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center text-sm font-medium"
+            >
+              Close
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+// frontend/src/App.jsx
 import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
@@ -13,6 +14,7 @@ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import Globe from "./pages/Globe";
 import { AuthProvider } from "./AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
 
 const queryClient = new QueryClient();
 
@@ -22,19 +24,25 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/globe" element={<Globe />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/prediction-tool" element={<PredictionTool />} />
-          <Route path="/world-map" element={<WorldMap />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </AuthProvider>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/world-map" element={<WorldMap />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            
+            {/* Protected routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/prediction-tool" element={<PredictionTool />} />
+              <Route path="/globe" element={<Globe />} />
+            </Route>
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

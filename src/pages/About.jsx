@@ -39,7 +39,7 @@ const About = () => {
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-black mb-6">About GlacierTide</h1>
               <p className="text-lg text-gray-500">
-                Dedicated to monitoring, understanding, and protecting the world's glaciers through innovation and collaboration.
+                Dedicated to understanding, predicting and protecting the world's glaciers through innovation and collaboration.
               </p>
             </div>
           </div>
@@ -55,7 +55,7 @@ const About = () => {
                 We combine cutting-edge technology with scientific expertise to monitor glacier changes and predict future trends.
               </p>
               <p className="text-gray-600 text-lg">
-                Our comprehensive approach encompasses glacier monitoring, climate data analysis, predictive modeling, and public awareness efforts. 
+                Our comprehensive approach encompasses sea level rise analysis, predictive modeling, and public awareness efforts. 
                 We believe that by sharing knowledge and fostering collaboration, we can contribute to global efforts to address climate change and protect these vital ecosystems.
               </p>
             </div>
@@ -116,9 +116,9 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {teamMembers.map((member, index) => (
                 <div key={index} className="glacier-card p-6 flex flex-col items-center text-center">
-                  <div className="w-24 h-24 rounded-full bg-glacier-100 mb-4 overflow-hidden">
+                  {/* <div className="w-24 h-24 rounded-full bg-glacier-100 mb-4 overflow-hidden">
                     <img src={member.imageUrl} className="w-full h-full object-cover" />
-                  </div>
+                  </div> */}
                   <h3 className="text-xl font-semibold text-black mb-1">{member.name}</h3>
                   <p className="text-glacier-600 text-sm mb-3">{member.position}</p>
                   <p className="text-gray-500">{member.description}</p>

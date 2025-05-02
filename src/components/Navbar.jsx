@@ -1,13 +1,15 @@
 // frontend/src/components/Navbar.jsx
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { Menu, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
     const { user, logout } = useAuth();
 
     useEffect(() => {
@@ -25,12 +27,28 @@ const Navbar = () => {
 
     const isActive = (path) => location.pathname === path;
 
+    // Define which routes need authentication
+    const protectedRoutes = ['/prediction-tool', '/globe'];
+    
+    // Handle navigation to protected routes
+    const handleNavigation = (path) => {
+        if (protectedRoutes.includes(path) && !user) {
+            toast.error('Please sign in to access this feature', {
+                duration: 3000,
+                position: 'top-center',
+            });
+            navigate('/sign-in', { state: { from: path } });
+        } else {
+            navigate(path);
+        }
+    };
+
     const navLinks = [
-        { name: 'About', path: '/about' },
-        { name: 'Prediction Tool', path: '/prediction-tool' },
-        { name: 'World Map', path: '/world-map' },
-        { name: 'Globe', path: '/globe' },
-        { name: 'Contact', path: '/contact' },
+        { name: 'About', path: '/about', protected: false },
+        { name: 'World Map', path: '/world-map', protected: false },
+        { name: 'Prediction Tool', path: '/prediction-tool', protected: true },
+        { name: 'Globe', path: '/globe', protected: true },
+        { name: 'Contact', path: '/contact', protected: false },
     ];
 
     return (
@@ -47,25 +65,28 @@ const Navbar = () => {
                     to="/" 
                     className="flex items-center space-x-2 text-black font-bold text-3xl"
                 >
-                {/* Logo Icon */}
-                <img 
+                    {/* Logo Icon */}
+                    <img 
                         src="logo1.ico" 
                         alt="GlacierTide Logo" 
                         className="h-12 w-14 mb-2"
                     />
-                     <span><span className="text-glacier-600">Glacier</span>Tide</span>
+                    <span><span className="text-glacier-600">Glacier</span>Tide</span>
                 </Link>
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center space-x-8">
                     {navLinks.map((link) => (
-                        <Link
+                        <button
                             key={link.path}
-                            to={link.path}
+                            onClick={() => handleNavigation(link.path)}
                             className={`nav-link ${isActive(link.path) ? 'active-nav-link' : ''}`}
                         >
                             {link.name}
-                        </Link>
+                            {link.protected && !user && (
+                                <span className="ml-1 text-xs text-glacier-500">•</span>
+                            )}
+                        </button>
                     ))}
                 </nav>
 
@@ -114,9 +135,9 @@ const Navbar = () => {
                 <div className="md:hidden glacier-glass animate-fade-in-down">
                     <div className="container mx-auto px-4 pt-2 pb-6 flex flex-col space-y-4">
                         {navLinks.map((link) => (
-                            <Link
+                            <button
                                 key={link.path}
-                                to={link.path}
+                                onClick={() => handleNavigation(link.path)}
                                 className={`block py-2 px-4 text-lg font-medium rounded-lg ${
                                     isActive(link.path)
                                         ? 'bg-glacier-100/50 text-glacier-700'
@@ -124,7 +145,10 @@ const Navbar = () => {
                                 }`}
                             >
                                 {link.name}
-                            </Link>
+                                {link.protected && !user && (
+                                    <span className="ml-1 text-xs text-glacier-500">•</span>
+                                )}
+                            </button>
                         ))}
                         <div className="flex flex-col space-y-3 pt-3">
                             {user ? (

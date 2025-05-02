@@ -6,23 +6,37 @@ import { Calendar, Info, MapPin, BarChart2, Filter } from 'lucide-react';
 // API base URL - change this to match your Flask server
 const API_BASE_URL = 'http://localhost:5000';
 
-// Sea regions based on WorldMap.jsx
+// Revised sea regions with multipliers
 const seaRegions = {
-  blacksea: {
-    id: 'blacksea',
-    name: 'Black Sea',
-  },
-  redsea: {
-    id: 'redsea',
-    name: 'Red Sea',
-  },
   arabiansea: {
     id: 'arabiansea',
     name: 'Arabian Sea',
+    multiplier: 1.0
   },
   caribbean: {
     id: 'caribbean',
     name: 'Caribbean Sea',
+    multiplier: 0.85
+  },
+  philippine: {
+    id: 'philippine',
+    name: 'Philippine Sea',
+    multiplier: 2.05
+  },
+  coral: {
+    id: 'coral',
+    name: 'Coral Sea',
+    multiplier: 1.1
+  },
+  labrador: {
+    id: 'labrador',
+    name: 'Labrador Sea',
+    multiplier: 0.85
+  },
+  barents: {
+    id: 'barents',
+    name: 'Barents Sea',
+    multiplier: 1.2
   }
 };
 
@@ -34,8 +48,11 @@ const predictionModels = [
   { id: 'xgboost', name: 'XGBoost' }
 ];
 
+// Global sea level rise rate (mm/year)
+const GLOBAL_SEA_RISE_RATE = 3.2;
+
 const PredictionTool = () => {
-  const [selectedSea, setSelectedSea] = useState('redsea');
+  const [selectedSea, setSelectedSea] = useState('arabiansea');
   const [timeframe, setTimeframe] = useState('50');
   const [selectedModel, setSelectedModel] = useState('linear');
   const [predictionData, setPredictionData] = useState([]);
@@ -54,11 +71,9 @@ const PredictionTool = () => {
           setApiStatus('error');
         }
       } catch (err) {
-        console.error("API health check failed:", err);
         setApiStatus('error');
       }
     };
-    
     checkApiStatus();
   }, []);
 
@@ -67,43 +82,34 @@ const PredictionTool = () => {
     const fetchPredictions = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const years = parseInt(timeframe);
-        const currentYear = 2025; // Current year
+        const currentYear = 2025;
         const data = [];
-        
-        // First fetch the model prediction for the final year
         const finalYear = currentYear + years;
         const seaName = seaRegions[selectedSea].name;
-        
-        console.log(`Fetching prediction for ${seaName} in year ${finalYear}`);
+        const seaMultiplier = seaRegions[selectedSea].multiplier;
+
+        // Fetch prediction from API
         const response = await fetch(`${API_BASE_URL}/predict/${seaName}/${finalYear}`);
-        
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error("API error response:", errorText);
           throw new Error(`API request failed with status ${response.status}`);
         }
-        
         const modelPredictions = await response.json();
-        console.log("API response:", modelPredictions);
-        
         if (modelPredictions.error) {
           throw new Error(modelPredictions.error);
         }
-        
-        // Get the selected model's prediction for the final year
-        const finalPrediction = modelPredictions[selectedModel];
-        
+
+        // Get the selected model's prediction for the final year and apply multiplier
+        let finalPrediction = modelPredictions[selectedModel];
         if (typeof finalPrediction !== 'number') {
           throw new Error(`Invalid prediction value: ${finalPrediction}`);
         }
-        
-        // Generate historical data (past 10 years) - this would ideally come from your API
-        // For now we'll simulate with a linear backtracking
+        finalPrediction = finalPrediction * seaMultiplier;
+
+        // Generate historical data (past 10 years)
         const baseRiseRate = finalPrediction / years;
-        
         for (let i = -10; i <= 0; i++) {
           const year = currentYear + i;
           const historicalLevel = Math.round(baseRiseRate * (i + 10) * 10) / 10;
@@ -113,79 +119,72 @@ const PredictionTool = () => {
             predicted: false
           });
         }
-        
+
         // Generate prediction data with a linear interpolation to the final prediction
         for (let i = 1; i <= years; i++) {
           const year = currentYear + i;
-          
-          // Calculate sea level for this year (linear interpolation to final prediction)
-          const progress = i / years;
           const seaLevel = Math.round((baseRiseRate * (i + 10)) * 10) / 10;
-          
           data.push({
             year,
             seaLevel,
             predicted: true
           });
         }
-        
+
         setPredictionData(data);
       } catch (err) {
-        console.error("Error fetching predictions:", err);
         setError(err.message);
-        
-        // Fallback to sample data if API fails
         generateFallbackData();
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     // Fallback data generator in case API fails
     const generateFallbackData = () => {
       const years = parseInt(timeframe);
       const currentYear = 2025;
       const data = [];
-      
-      // Base rise rate varies by sea and model (mock data)
-      const baseRates = {
-        redsea: { linear: 3.2, decision_tree: 3.4, random_forest: 3.3, xgboost: 3.5 },
-        blacksea: { linear: 2.8, decision_tree: 3.0, random_forest: 2.9, xgboost: 3.1 },
-        arabiansea: { linear: 3.0, decision_tree: 3.2, random_forest: 3.1, xgboost: 3.3 },
-        caribbean: { linear: 2.8, decision_tree: 3.0, random_forest: 2.9, xgboost: 3.1 }
+      const seaMultiplier = seaRegions[selectedSea].multiplier;
+      const baseRiseRate = GLOBAL_SEA_RISE_RATE * seaMultiplier;
+      const modelFactors = {
+        linear: 1.0,
+        decision_tree: 1.05,
+        random_forest: 0.98,
+        xgboost: 1.08
       };
-      
-      const baseRiseRate = baseRates[selectedSea][selectedModel] || 3.0;
-      
-      // Generate historical data
+      const adjustedRiseRate = baseRiseRate * modelFactors[selectedModel];
       for (let i = -10; i <= 0; i++) {
         const year = currentYear + i;
-        const historicalLevel = Math.round(baseRiseRate * (i + 10) * 10) / 10;
+        const historicalLevel = Math.round(adjustedRiseRate * (i + 10) * 10) / 10;
         data.push({
           year,
           seaLevel: historicalLevel,
           predicted: false
         });
       }
-      
-      // Generate prediction data
       for (let i = 1; i <= years; i++) {
         const year = currentYear + i;
-        
-        // Add some variability
-        const variability = Math.sin(i * 0.5) * 2;
-        const seaLevel = Math.round((baseRiseRate * (i + 10) + variability) * 10) / 10;
-        
+        let variability = 0;
+        if (selectedModel === 'linear') {
+          variability = Math.sin(i * 0.2) * 1.5;
+        } else if (selectedModel === 'decision_tree') {
+          variability = (i % 5 === 0) ? 2 : -1;
+        } else if (selectedModel === 'random_forest') {
+          variability = Math.sin(i * 0.5) * 1.2 + Math.cos(i * 0.3) * 0.8;
+        } else {
+          variability = Math.sin(i * 0.4) * 2;
+        }
+        const seaLevel = Math.round((adjustedRiseRate * (i + 10) + variability) * 10) / 10;
         data.push({
           year,
           seaLevel,
           predicted: true
         });
       }
-      
       setPredictionData(data);
     };
-    
+
     if (apiStatus === 'connected') {
       fetchPredictions();
     } else if (apiStatus === 'error') {
@@ -204,7 +203,7 @@ const PredictionTool = () => {
   const getAverageRiseRate = () => {
     if (predictionData.length === 0) return 0;
     const totalRise = getTotalRise();
-    const years = parseInt(timeframe) + 10; // Include historical years
+    const years = parseInt(timeframe) + 10;
     return Math.round((totalRise / years) * 100) / 100;
   };
 
@@ -237,33 +236,33 @@ const PredictionTool = () => {
                 {/* Controls */}
                 <div className="lg:col-span-1">
                   <h2 className="text-2xl font-semibold text-black mb-6">Prediction Settings</h2>
-                  
                   <div className="space-y-6">
                     <div>
                       <label htmlFor="sea" className="block text-gray-600 mb-2 font-medium">
                         <MapPin className="inline-block h-4 w-4 mr-2" />
                         Select Sea Region
                       </label>
-                      <select 
-                        id="sea" 
-                        value={selectedSea} 
+                      <select
+                        id="sea"
+                        value={selectedSea}
                         onChange={(e) => setSelectedSea(e.target.value)}
                         className="glacier-input w-full"
                       >
                         {Object.values(seaRegions).map((sea) => (
-                          <option key={sea.id} value={sea.id}>{sea.name}</option>
+                          <option key={sea.id} value={sea.id}>
+                            {sea.name} (×{sea.multiplier} multiplier)
+                          </option>
                         ))}
                       </select>
                     </div>
-                    
                     <div>
                       <label htmlFor="model" className="block text-gray-600 mb-2 font-medium">
                         <Filter className="inline-block h-4 w-4 mr-2" />
                         Select Prediction Model
                       </label>
-                      <select 
-                        id="model" 
-                        value={selectedModel} 
+                      <select
+                        id="model"
+                        value={selectedModel}
                         onChange={(e) => setSelectedModel(e.target.value)}
                         className="glacier-input w-full"
                       >
@@ -272,15 +271,14 @@ const PredictionTool = () => {
                         ))}
                       </select>
                     </div>
-                    
                     <div>
                       <label htmlFor="timeframe" className="block text-gray-600 mb-2 font-medium">
                         <Calendar className="inline-block h-4 w-4 mr-2" />
                         Prediction Timeframe (Years)
                       </label>
-                      <select 
-                        id="timeframe" 
-                        value={timeframe} 
+                      <select
+                        id="timeframe"
+                        value={timeframe}
                         onChange={(e) => setTimeframe(e.target.value)}
                         className="glacier-input w-full"
                       >
@@ -290,31 +288,17 @@ const PredictionTool = () => {
                         <option value="100">100 Years</option>
                       </select>
                     </div>
-                    
                     <div className="bg-glacier-50 p-4 rounded-lg border border-glacier-100">
                       <div className="flex items-start mb-2">
                         <Info className="h-5 w-5 text-glacier-700 mr-2 flex-shrink-0 mt-0.5" />
                         <h3 className="text-lg font-medium text-black">About This Tool</h3>
                       </div>
                       <p className="text-sm text-gray-500">
-                        This prediction tool uses trained machine learning models to forecast sea level changes. Results show estimated sea level rise in millimeters over time based on the selected model and regional factors.
+                        This prediction tool uses trained machine learning models to forecast sea level changes. Results show estimated sea level rise in millimeters over time based on the selected model and regional factors. Each sea has a specific multiplier applied to the global sea level rise rate of {GLOBAL_SEA_RISE_RATE} mm/year.
                       </p>
                     </div>
-{/*                     
-                    <div className="flex items-center space-x-3">
-                      <span className="inline-block w-3 h-3 bg-blue-600 rounded-full"></span>
-                      <span className="text-sm text-gray-600">Historical Data</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <span className="inline-block w-3 h-3 bg-blue-600 rounded-full opacity-50"></span>
-                      <span className="text-sm text-gray-600">Predicted Rise</span>
-                    </div>
-                    <div className="text-sm text-gray-500 italic">
-                      Note: Dotted lines represent predicted future values.
-                    </div> */}
                   </div>
                 </div>
-                
                 {/* Visualization */}
                 <div className="lg:col-span-2">
                   <div className="flex items-center justify-between mb-6">
@@ -323,7 +307,6 @@ const PredictionTool = () => {
                       Sea Level Rise Projection
                     </h2>
                   </div>
-                  
                   <div className="bg-white rounded-lg p-4 h-[400px]">
                     {isLoading ? (
                       <div className="h-full flex items-center justify-center">
@@ -345,14 +328,14 @@ const PredictionTool = () => {
                           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis 
-                            dataKey="year" 
-                            label={{ value: 'Year', position: 'insideBottomRight', offset: -10 }} 
+                          <XAxis
+                            dataKey="year"
+                            label={{ value: 'Year', position: 'insideBottomRight', offset: -10 }}
                           />
-                          <YAxis 
-                            label={{ value: 'Sea Level Rise (mm)', angle: -90, position: 'insideLeft' }} 
+                          <YAxis
+                            label={{ value: 'Sea Level Rise (mm)', angle: -90, position: 'insideLeft' }}
                           />
-                          <Tooltip 
+                          <Tooltip
                             content={({ active, payload, label }) => {
                               if (active && payload && payload.length) {
                                 const data = payload[0].payload;
@@ -370,11 +353,11 @@ const PredictionTool = () => {
                             }}
                           />
                           <Legend />
-                          <Line 
-                            type="monotone" 
-                            dataKey="seaLevel" 
-                            name="Sea Level Rise" 
-                            stroke="#0284c7" 
+                          <Line
+                            type="monotone"
+                            dataKey="seaLevel"
+                            name="Sea Level Rise"
+                            stroke="#0284c7"
                             strokeWidth={2}
                             activeDot={{ r: 8 }}
                             strokeDasharray={d => d.predicted ? "5 5" : "0"}
@@ -384,7 +367,6 @@ const PredictionTool = () => {
                       </ResponsiveContainer>
                     )}
                   </div>
-                  
                   <div className="mt-6 p-4 bg-ice-50 rounded-lg border border-ice-100">
                     <h3 className="text-lg font-medium text-black mb-2">Analysis Summary</h3>
                     {isLoading ? (
@@ -396,7 +378,7 @@ const PredictionTool = () => {
                       <p className="text-red-500">Unable to generate analysis due to error.</p>
                     ) : (
                       <p className="text-gray-600">
-                        Based on the {predictionModels.find(m => m.id === selectedModel)?.name} model, sea levels in the {seaRegions[selectedSea]?.name} are projected to rise by approximately {getTotalRise()} mm over the next {parseInt(timeframe) + 10} years, with an average rate of {getAverageRiseRate()} mm per year. This rise could impact coastal communities, infrastructure, and ecosystems in the region.
+                        Based on the {predictionModels.find(m => m.id === selectedModel)?.name} model, sea levels in the {seaRegions[selectedSea]?.name} are projected to rise by approximately {getTotalRise()} mm over the next {parseInt(timeframe) + 10} years, with an average rate of {getAverageRiseRate()} mm per year. This represents a {seaRegions[selectedSea]?.multiplier}× multiplier on the global average sea level rise rate. This rise could impact coastal communities, infrastructure, and ecosystems in the region.
                       </p>
                     )}
                   </div>
@@ -411,4 +393,3 @@ const PredictionTool = () => {
 };
 
 export default PredictionTool;
-  

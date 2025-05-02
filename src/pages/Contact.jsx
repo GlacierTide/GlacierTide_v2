@@ -1,6 +1,7 @@
 import { Layout } from '../components/Layout';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { Mail, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,24 +18,51 @@ const Contact = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate form submission
-    setTimeout(() => {
-      setFormStatus('success');
-      // Reset form after successful submission
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
+    setFormStatus('loading');
+    
+    try {
+      // Initialize EmailJS with your public key
+      emailjs.init("bxQPe5vDV0wM7z6WZ");
       
-      // Clear success message after 5 seconds
-      setTimeout(() => {
-        setFormStatus(null);
-      }, 5000);
-    }, 1000);
+      // Prepare template parameters - make sure these match your template variables exactly
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        time: new Date().toLocaleString() // Add current timestamp
+      };
+      
+      // Send email using EmailJS
+      const response = await emailjs.send(
+        "service_e365wr6",  // EmailJS service ID
+        "template_uqu51ui", // EmailJS template ID
+        templateParams
+      );
+      
+      if (response.status === 200) {
+        setFormStatus('success');
+        // Reset form after successful submission
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setFormStatus(null);
+        }, 5000);
+      } else {
+        setFormStatus('error');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setFormStatus('error');
+    }
   };
 
   return (
@@ -83,8 +111,6 @@ const Contact = () => {
                           <p className="text-gray-600">+91 9999988888</p>
                         </div>
                       </div>
-                      
-                      
                     </div>
                     
                     <div className="mt-8 pt-8 border-t border-ice-100">
@@ -141,6 +167,18 @@ const Contact = () => {
                           </svg>
                         </div>
                         <p className="text-red-700">Something went wrong. Please try again later.</p>
+                      </div>
+                    )}
+                    
+                    {formStatus === 'loading' && (
+                      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center">
+                        <div className="mr-3 bg-blue-100 p-2 rounded-full">
+                          <svg className="h-5 w-5 text-blue-700 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        </div>
+                        <p className="text-blue-700">Sending your message...</p>
                       </div>
                     )}
                     
@@ -216,8 +254,9 @@ const Contact = () => {
                       <button
                         type="submit"
                         className="btn-primary flex items-center justify-center group"
+                        disabled={formStatus === 'loading'}
                       >
-                        Send Message
+                        {formStatus === 'loading' ? 'Sending...' : 'Send Message'}
                         <Send className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </form>

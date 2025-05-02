@@ -33,26 +33,35 @@ export default function Earth(props) {
     }
   };
 
+  // Define the getSeaNameFromUV function to map UV coordinates to sea regions
   const getSeaNameFromUV = (uv) => {
     const { x, y } = uv;
 
-    // Arabian Sea (Refined) - Near India and the Arabian Peninsula
-    if (x > 0.66 && x < 0.70 && y > 0.55 && y < 0.58) {
+    // Arabian Sea
+    if (x > 0.80 && x < 0.85 && y > 0.55 && y < 0.59) {
       return 'Arabian Sea';
     }
-    // Red Sea (Refined) - Between Africa and the Arabian Peninsula
-    else if (x > 0.58 && x < 0.62 && y > 0.56 && y < 0.65) {
-      return 'Red Sea';
-    }
-    // Black Sea (Refined) - North of Turkey, between Europe and Asia
-    else if (x > 0.57 && x < 0.62 && y > 0.70 && y < 0.77) {
-      return 'Black Sea';
-    }
-    //Caribbean sea
-    else if (x > 0.257 && x < 0.275 && y > 0.510 && y < 0.550) {
+    // Caribbean Sea
+    else if (x > 0.22 && x < 0.25 && y > 0.59 && y < 0.62) {
       return 'Caribbean Sea';
     }
-  
+    // Philippine Sea
+    else if (x > 0.62 && x < 0.66 && y > 0.57 && y < 0.61) {
+      return 'Philippine Sea';
+    }
+    // Coral Sea
+    else if (x > 0.57 && x < 0.61 && y > 0.40 && y < 0.45) {
+      return 'Coral Sea';
+    }
+    // Labrador Sea
+    else if (x > 0.12 && x < 0.16 && y > 0.79 && y < 0.83) {
+      return 'Labrador Sea';
+    }
+    // Barents Sea
+    else if (x > 0.87 && x < 0.91 && y > 0.87 && y < 0.91) {
+      return 'Barents Sea';
+    }
+
     return null; // No recognized sea region
   };
 
@@ -67,28 +76,40 @@ export default function Earth(props) {
 
       {/* Markers */}
       <Marker
-        u={0.897}
-        v={0.637}
-        color="red"
-        onClick={() => props.onSeaClick('Red Sea')} // Trigger popup for Red Sea
-      />
-      <Marker
-        u={0.9}
-        v={0.740}
-        color="yellow"
-        onClick={() => props.onSeaClick('Black Sea')} // Trigger popup for Black Sea
-      />
-      <Marker
         u={0.825}
         v={0.571}
         color="black"
-        onClick={() => props.onSeaClick('Arabian Sea')} // Trigger popup for Arabian Sea
+        onClick={() => props.onSeaClick('Arabian Sea')}
       />
       <Marker
         u={0.236}
         v={0.607}
-        color="white"
-        onClick={() => props.onSeaClick('Caribbean Sea')} // Trigger popup for Arabian Sea
+        color="red"
+        onClick={() => props.onSeaClick('Caribbean Sea')}
+      />
+      <Marker
+        u={0.64}
+        v={0.59}
+        color="orange"
+        onClick={() => props.onSeaClick('Philippine Sea')}
+      />
+      <Marker
+        u={0.59}
+        v={0.423}
+        color="cyan"
+        onClick={() => props.onSeaClick('Coral Sea')}
+      />
+      <Marker
+        u={0.14}
+        v={0.81}
+        color="brown"
+        onClick={() => props.onSeaClick('Labrador Sea')}
+      />
+      <Marker
+        u={0.89}
+        v={0.89}
+        color="violet"
+        onClick={() => props.onSeaClick('Barents Sea')}
       />
     </group>
   );

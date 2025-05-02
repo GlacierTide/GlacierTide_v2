@@ -8,10 +8,12 @@ import * as THREE from 'three';
 
 // Sea coordinates based on your Marker UVs
 const seaCoordinates = {
-  'Red Sea': { u: 0.897, v: 0.637 },
-  'Black Sea': { u: 0.9, v: 0.740 },
   'Arabian Sea': { u: 0.825, v: 0.571 },
   'Caribbean Sea': { u: 0.236, v: 0.607 },
+  'Philippine Sea': { u: 0.64, v: 0.59 },
+  'Coral Sea': { u: 0.59, v: 0.423 },
+  'Labrador Sea': { u: 0.325, v: 0.750 },
+  'Barents Sea': { u: 0.89, v: 0.89 },
 };
 
 // Camera controller for animation
@@ -106,7 +108,7 @@ const Globe = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search for a sea (e.g., Red Sea)"
+            placeholder="Search for a sea (e.g., Arabian Sea)"
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
           />
           <button

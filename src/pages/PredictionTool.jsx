@@ -86,52 +86,38 @@ const PredictionTool = () => {
       try {
         const years = parseInt(timeframe);
         const currentYear = 2025;
-        const data = [];
         const finalYear = currentYear + years;
         const seaName = seaRegions[selectedSea].name;
-        const seaMultiplier = seaRegions[selectedSea].multiplier;
 
         // Fetch prediction from API
         const response = await fetch(`${API_BASE_URL}/predict/${seaName}/${finalYear}`);
         if (!response.ok) {
           throw new Error(`API request failed with status ${response.status}`);
         }
+        
         const modelPredictions = await response.json();
         if (modelPredictions.error) {
           throw new Error(modelPredictions.error);
         }
 
-        // Get the selected model's prediction for the final year and apply multiplier
-        let finalPrediction = modelPredictions[selectedModel];
-        if (typeof finalPrediction !== 'number') {
-          throw new Error(`Invalid prediction value: ${finalPrediction}`);
+        // Transform the data for the chart
+        const chartData = [];
+        const yearsList = modelPredictions.years;
+        const selectedModelData = modelPredictions[selectedModel];
+        
+        if (!Array.isArray(yearsList) || !Array.isArray(selectedModelData)) {
+          throw new Error('Invalid prediction data format');
         }
-        finalPrediction = finalPrediction * seaMultiplier;
-
-        // Generate historical data (past 10 years)
-        const baseRiseRate = finalPrediction / years;
-        for (let i = -10; i <= 0; i++) {
-          const year = currentYear + i;
-          const historicalLevel = Math.round(baseRiseRate * (i + 10) * 10) / 10;
-          data.push({
-            year,
-            seaLevel: historicalLevel,
-            predicted: false
+        
+        for (let i = 0; i < yearsList.length; i++) {
+          chartData.push({
+            year: yearsList[i],
+            seaLevel: selectedModelData[i],
+            predicted: yearsList[i] >= currentYear
           });
         }
 
-        // Generate prediction data with a linear interpolation to the final prediction
-        for (let i = 1; i <= years; i++) {
-          const year = currentYear + i;
-          const seaLevel = Math.round((baseRiseRate * (i + 10)) * 10) / 10;
-          data.push({
-            year,
-            seaLevel,
-            predicted: true
-          });
-        }
-
-        setPredictionData(data);
+        setPredictionData(chartData);
       } catch (err) {
         setError(err.message);
         generateFallbackData();
@@ -154,6 +140,8 @@ const PredictionTool = () => {
         xgboost: 1.08
       };
       const adjustedRiseRate = baseRiseRate * modelFactors[selectedModel];
+      
+      // Generate historical data (past 10 years)
       for (let i = -10; i <= 0; i++) {
         const year = currentYear + i;
         const historicalLevel = Math.round(adjustedRiseRate * (i + 10) * 10) / 10;
@@ -163,6 +151,8 @@ const PredictionTool = () => {
           predicted: false
         });
       }
+      
+      // Generate prediction data with variability based on model
       for (let i = 1; i <= years; i++) {
         const year = currentYear + i;
         let variability = 0;

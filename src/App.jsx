@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Globe from "./pages/Globe";
 import { AuthProvider } from "./AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
+import SeaLevelAgent from "./components/SeaLevelAgent";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,9 @@ const App = () => (
             
             <Route path="*" element={<NotFound />} />
           </Routes>
+          
+          {/* Sea Level Agent - Available on all pages */}
+          <SeaLevelAgent />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

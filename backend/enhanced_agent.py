@@ -51,8 +51,8 @@ class EnhancedSeaLevelAgent:
             
         self.llm = ChatGroq(
             temperature=0.3,
-            model_name="qwen/qwen3-32b",
-            # model_name="llama-3.3-70b-versatile",
+            # model_name="qwen/qwen3-32b",
+            model_name="llama-3.3-70b-versatile",
             groq_api_key=api_key,
             max_tokens=1024,
             request_timeout=30

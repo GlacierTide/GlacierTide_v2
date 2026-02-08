@@ -63,7 +63,7 @@ const Hero = () => {
                   enable: true,
                   area: 800
                 },
-                value: 700
+                value: 350
               },
               opacity: {
                 value: {

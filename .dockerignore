@@ -1,0 +1,28 @@
+# ── Node.js ──────────────────────────────────────
+node_modules/
+npm-debug.log*
+
+# ── Build output (will rebuild inside Docker) ───
+dist/
+build/
+.vite/
+
+# ── Git ──────────────────────────────────────────
+.git/
+.gitignore
+
+# ── Environment / Secrets ────────────────────────
+# We use env_file in docker-compose, so .env is not needed in context
+# backend/.env is excluded — docker-compose handles it via env_file
+
+# ── Python (frontend doesn't need these) ─────────
+backend/venv/
+backend/.venv/
+backend/__pycache__/
+backend/*.pyc
+
+# ── Misc ─────────────────────────────────────────
+*.md
+*.pdf
+.DS_Store
+Thumbs.db

@@ -9,13 +9,18 @@ const app = express();
 const PORT = process.env.PORT || 8800;
 
 // Allowed origins
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+const allowedOrigins = [
+    'http://localhost:5173', // Vite dev server
+    'http://localhost:5174', // Vite dev server (alt port)
+    'http://localhost:3000', // Docker / nginx production
+    'http://localhost:80',   // Docker nginx (direct)
+];
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: function(origin, callback) {
+    origin: function (origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
@@ -48,8 +53,8 @@ app.get('/api/ml/predict/:seaName/:year', (req, res) => {
                 res.json(responseData);
             } catch (error) {
                 console.error('Error parsing Flask response:', error);
-                res.status(500).json({ 
-                    error: 'Failed to parse response', 
+                res.status(500).json({
+                    error: 'Failed to parse response',
                     details: error.message,
                     rawResponse: data
                 });
@@ -79,7 +84,7 @@ const proxyToFlask = (req, res, endpoint) => {
     if (requestMethod === 'post' || requestMethod === 'put') {
         const postData = JSON.stringify(req.body);
         options.headers['Content-Length'] = Buffer.byteLength(postData);
-        
+
         const flaskReq = http.request(proxyUrl, options, (flaskRes) => {
             let data = '';
             flaskRes.on('data', (chunk) => data += chunk);
@@ -89,8 +94,8 @@ const proxyToFlask = (req, res, endpoint) => {
                     res.status(flaskRes.statusCode).json(responseData);
                 } catch (error) {
                     console.error('Error parsing Flask agent response:', error);
-                    res.status(500).json({ 
-                        error: 'Failed to parse agent response', 
+                    res.status(500).json({
+                        error: 'Failed to parse agent response',
                         details: error.message,
                         rawResponse: data
                     });
@@ -100,9 +105,9 @@ const proxyToFlask = (req, res, endpoint) => {
 
         flaskReq.on('error', (error) => {
             console.error('Agent proxy error:', error.message);
-            res.status(503).json({ 
-                error: 'Agent service unavailable', 
-                details: error.message 
+            res.status(503).json({
+                error: 'Agent service unavailable',
+                details: error.message
             });
         });
 
@@ -118,8 +123,8 @@ const proxyToFlask = (req, res, endpoint) => {
                     res.status(flaskRes.statusCode).json(responseData);
                 } catch (error) {
                     console.error('Error parsing Flask agent response:', error);
-                    res.status(500).json({ 
-                        error: 'Failed to parse agent response', 
+                    res.status(500).json({
+                        error: 'Failed to parse agent response',
                         details: error.message,
                         rawResponse: data
                     });
@@ -127,9 +132,9 @@ const proxyToFlask = (req, res, endpoint) => {
             });
         }).on('error', (error) => {
             console.error('Agent proxy error:', error.message);
-            res.status(503).json({ 
-                error: 'Agent service unavailable', 
-                details: error.message 
+            res.status(503).json({
+                error: 'Agent service unavailable',
+                details: error.message
             });
         });
     }
@@ -163,17 +168,17 @@ app.get('/health', (req, res) => {
                 const responseData = JSON.parse(data);
                 res.json(responseData);
             } catch (error) {
-                res.status(500).json({ 
-                    error: 'Health check failed', 
-                    details: error.message 
+                res.status(500).json({
+                    error: 'Health check failed',
+                    details: error.message
                 });
             }
         });
     }).on('error', (error) => {
         console.error('Health check proxy error:', error.message);
-        res.status(503).json({ 
-            error: 'Backend service unavailable', 
-            details: error.message 
+        res.status(503).json({
+            error: 'Backend service unavailable',
+            details: error.message
         });
     });
 });
@@ -193,5 +198,5 @@ app.listen(PORT, () => {
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Global error handler:', err.stack);
-    res.status(500).json({ error: 'Something went wrong!', details: err.message });   
+    res.status(500).json({ error: 'Something went wrong!', details: err.message });
 });

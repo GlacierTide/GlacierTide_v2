@@ -1,0 +1,30 @@
+
+services:
+
+  # ── Node.js Express + Python Flask ML Server ─────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: glaciertide-backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8800:8800"
+      - "5000:5000"
+    volumes:
+      # Give backend access to the sealevel.csv file from root public folder
+      - ./public:/app/public:ro
+    restart: unless-stopped
+
+  # ── React Frontend (served via nginx) ────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: glaciertide-frontend
+    ports:
+      - "3000:80"     # Access the app at http://localhost:3000
+    depends_on:
+      - backend
+    restart: unless-stopped
